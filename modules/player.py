@@ -2,9 +2,10 @@ import pygame
 from modules import sprites
 
 class Player(sprites.Sprite):
-    gravityValue = 8
+    gravityValue = 5
+    jumpForce = 20
+    _jumpingTo = 0
     speed = 5
-    _isgrounded = False
 
     def __init__(self, image_path,x,y):
         super().__init__(image_path,x,y,"Player")
@@ -12,6 +13,7 @@ class Player(sprites.Sprite):
     def update(self, entities):
         # affect gravity
         velocity = [0,0]
+        verticalVelocity = 0
 
         velocity[1] += self.gravityValue
        
@@ -20,20 +22,31 @@ class Player(sprites.Sprite):
             velocity[0] -= self.speed
         if keys[pygame.K_d]:
             velocity[0] += self.speed
-        if keys[pygame.K_w] and self._isgrounded:
-            velocity[1] -= self.gravityValue
+        
+        
 
         # check left and right
         canMove = True
-        prect = pygame.Rect((self.rect.x + self.rect.width/2) + velocity[0],(self.rect.y + self.rect.height/2) + velocity[1],1,1)
+        _isgrounded = False
+        prect = pygame.Rect((self.rect.x) + velocity[0],(self.rect.y) + velocity[1],self.rect.width,self.rect.height)
         for entity in entities:
             if entity.tag == "ground":
                 if (prect.colliderect(entity.rect)):
-                    self._isgrounded = True
-                    canMove = False
+                    _isgrounded = True
                     break
+        
+        if keys[pygame.K_w] and _isgrounded:
+            self._jumpingTo = self.jumpForce
+        
+        if (self._jumpingTo > 0):
+            self.move(0,-self.gravityValue)
+            self._jumpingTo -= 1
+        
+        elif (not _isgrounded and self._jumpingTo <= 0):
+            self.move(0,velocity[1])
+        
         if (canMove):
-            self.move(velocity[0],velocity[1])
+            self.move(velocity[0],0)
         
 
 
