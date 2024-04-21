@@ -10,6 +10,7 @@ class Player(sprites.Sprite):
     def __init__(self, image_path,x,y,tag="Player"):
         super().__init__(image_path,x,y,tag)
 
+
     def update(self, entities):
         # affect gravity
         velocity = [0,0]
@@ -33,13 +34,13 @@ class Player(sprites.Sprite):
             if entity.tag == "ground":
                 if (prect.colliderect(entity.rect)):
                     # check down 
-                    if (pygame.Rect((self.rect.x),(self.rect.y)+ velocity[1],self.rect.width,self.rect.height).colliderect(entity.rect)):
+                    if (not _isgrounded and pygame.Rect((self.rect.x),(self.rect.y)+ velocity[1],self.rect.width,self.rect.height).colliderect(entity.rect)):
                         _isgrounded = True
                     # check up (so player can jump if it's clear)
-                    if (pygame.Rect((self.rect.x),(self.rect.y) - self.gravityValue,self.rect.width,self.rect.height).colliderect(entity.rect)):
+                    if (canJump and pygame.Rect((self.rect.x),(self.rect.y) - self.gravityValue,self.rect.width,self.rect.height).colliderect(entity.rect)):
                         canJump = False
                     # check left and right
-                    if (pygame.Rect((self.rect.x) + velocity[0],(self.rect.y),self.rect.width,self.rect.height).colliderect(entity.rect)):
+                    if (canMove and pygame.Rect((self.rect.x) + velocity[0],(self.rect.y),self.rect.width,self.rect.height).colliderect(entity.rect)):
                         canMove = False
                     
                     if (not canMove and _isgrounded and not canJump ):
@@ -66,6 +67,9 @@ class Player(sprites.Sprite):
             self.move(velocity[0],0)
         
         pass
+
+    def getEval(self):
+        return f"Player('{self._imgpath}',{self.rect.x},{self.rect.y},'{self.tag}')"
     
     def draw(self, surface):
         super().draw(surface)

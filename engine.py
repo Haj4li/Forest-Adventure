@@ -1,7 +1,7 @@
 import pygame
-
-from modules import sprites
-from modules import player
+import os
+from modules.sprites import *
+from modules.player import Player
 
 
 class Game:
@@ -12,11 +12,13 @@ class Game:
     _selectedSprite = None
     _mousepos = pygame.Vector2(0,0)
     _font = None
+    _removeFlag = False
 
     # camera handler
 
     # _entities list
     _entities = []
+    _editorModeEntities = { }
 
     def __init__(self, title, screen_width, screen_height):
         pygame.init()
@@ -24,16 +26,37 @@ class Game:
         pygame.display.set_caption(title)
         self._clock = pygame.time.Clock()
         self._font =pygame.font.Font(None, 15)
+        self._entityKeys = self._editorModeEntities.keys()
         pass
 
+    def _addEntity(self, entity):
+        if (not entity.hash in self._entityKeys):
+            self._editorModeEntities[entity.hash] = entity.clone()
+            self._entityKeys = self._editorModeEntities.keys()
+            if (self._loggingEnabled):
+                print(f"Entity {entity.hash} added to editor")
+
+        self._entities.append(entity)
+
+
     def _start(self):
-        # add sprites
-        _player = player.Player("assets/fox.png",50,50)
-        # _player.gravityValue = 0
-        
-        self._entities.append(_player)
-        for i in range (10):
-            self._entities.append(sprites.Sprite("assets/ground.png",i*64,500,"ground"))
+        # TODO: seprate editing entities from other
+        # TODO: remove entities with right click
+        # TODO: remove add entity function 
+        # check saved level
+        if (os.path.exists("level.lfa")):
+            # load entities from level.lfa
+            loadLevel = open("level.lfa", "r").readlines()
+            for line in loadLevel:
+                self._addEntity(eval(line))
+        else:
+            # add sprites
+            _player = Player("assets/fox.png",50,50)
+            # _player.gravityValue = 0
+            
+            self._addEntity(_player)
+            for i in range (10):
+                self._addEntity(Sprite("assets/ground.png",i*64,500,"ground"))
             
         if (self._editingLevelEnabled):
             self._selectedSprite = self._entities[0].clone()
@@ -47,23 +70,27 @@ class Game:
                 return
             elif event.type == pygame.MOUSEBUTTONUP:
                 if self._editingLevelEnabled and event.button == 1:
-                    self._entities.append(self._selectedSprite.clone())
+                    self._addEntity(self._selectedSprite.clone())
             
             # handle user input
             elif event.type == pygame.KEYUP:
                 if (event.key == pygame.K_TAB): # change game mode (Game/Editor)
                     self._editingLevelEnabled = not self._editingLevelEnabled
                 elif (self._editingLevelEnabled and event.key == pygame.K_e): # select next entity editor mode 
-                    temp = self._entities[self._entityIndex]
-                    checkdup = True
-                    while (temp.tag == self._selectedSprite.tag and checkdup): # skip duplicate selection
-                        self._entityIndex += 1
-                        if (self._entityIndex >= len(self._entities)):
-                            self._entityIndex = 0
-                            checkdup = False
-                        temp = self._entities[self._entityIndex]
+                    self._entityIndex += 1
+                    keys = list(self._editorModeEntities.keys())
+                    if (self._entityIndex >= len(keys)):
+                        self._entityIndex = 0
+                    values = list(self._editorModeEntities.values())
                     del self._selectedSprite
-                    self._selectedSprite = temp.clone()
+                    self._selectedSprite = values[self._entityIndex].clone()
+                elif (event.key == pygame.K_F1): # Save the game
+                    so = open("level.lfa",'w')
+                    id = 0
+                    for entity in self._entities:
+                        id +=1
+                        so.write(f"{entity.getEval()} # entity # {id}\n")
+                    so.close()
                 elif (event.key == pygame.K_ESCAPE): # Escape the game
                     self._isRunning = False
                     return
@@ -80,6 +107,7 @@ class Game:
                     entity.update()
     
         elif (self._editingLevelEnabled and self._selectedSprite != None):
+            self._removeFlag = False
             # limit the position of mouse and selected sprite
             # due to the sprite rect
             fixedPos = pygame.Vector2(int(self._mousepos.x / self._selectedSprite.rect.width)*self._selectedSprite.rect.width,int(self._mousepos.y / self._selectedSprite.rect.height)*self._selectedSprite.rect.height)
@@ -89,7 +117,7 @@ class Game:
         pass
 
     def _drawLog(self):
-        text_render = self._font.render(f"Total Entities {len(self._entities)} Loaded Images {len(sprites.images)} Mouse Pos {self._mousepos}", True, (0,0, 0))
+        text_render = self._font.render(f"Total Entities {len(self._entities)} Loaded Images {len(images)} Mouse Pos {self._mousepos}", True, (0,0, 0))
         text_rect = text_render.get_rect()
         text_rect.x = 50
         text_rect.y = 50
