@@ -23,7 +23,6 @@ class Sprite():
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-        self.rect.center = (x, y)
         self.position = pygame.Vector2(x, y)
         self.tag = tag
     
@@ -38,7 +37,6 @@ class Sprite():
         pass
 
     def clone(self):
-        print(self._imgpath)
         return type(self)(self._imgpath,self.rect.x,self.rect.y,self.tag)
     
     def draw(self, surface):

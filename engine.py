@@ -34,6 +34,7 @@ class Game:
         self._entities.append(_player)
         for i in range (10):
             self._entities.append(sprites.Sprite("assets/ground.png",i*64,500,"ground"))
+            
         if (self._editingLevelEnabled):
             self._selectedSprite = self._entities[0].clone()
         pass
@@ -44,35 +45,32 @@ class Game:
             if event.type == pygame.QUIT:
                 self._isRunning = False
                 return
-            elif self._editingLevelEnabled and event.type == pygame.MOUSEBUTTONDOWN:
-                # TODO: fix this shit
-                self._entities.append(self._selectedSprite.clone())
-    
-        # handle user input
-        keys = pygame.key.get_pressed()
-        self._mousepos = pygame.Vector2(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1])
-
-        if (keys[pygame.K_TAB]):
-            self._editingLevelEnabled = not self._editingLevelEnabled
-
-        if keys[pygame.K_ESCAPE]:
-            self._isRunning = False
-            return
-        if self._editingLevelEnabled and keys[pygame.K_e]: # next entity
-            temp = self._entities[self._entityIndex]
-            checkdup = True
-            while (temp.tag == self._selectedSprite.tag and checkdup):
-                self._entityIndex += 1
-                if (self._entityIndex >= len(self._entities)):
-                    self._entityIndex = 0
-                    checkdup = False
-                
-                temp = self._entities[self._entityIndex]
-            del self._selectedSprite
-
-            self._selectedSprite = temp.clone()
-                    
+            elif event.type == pygame.MOUSEBUTTONUP:
+                if self._editingLevelEnabled and event.button == 1:
+                    self._entities.append(self._selectedSprite.clone())
             
+            # handle user input
+            elif event.type == pygame.KEYUP:
+                if (event.key == pygame.K_TAB): # change game mode (Game/Editor)
+                    self._editingLevelEnabled = not self._editingLevelEnabled
+                elif (self._editingLevelEnabled and event.key == pygame.K_e): # select next entity editor mode 
+                    temp = self._entities[self._entityIndex]
+                    checkdup = True
+                    while (temp.tag == self._selectedSprite.tag and checkdup): # skip duplicate selection
+                        self._entityIndex += 1
+                        if (self._entityIndex >= len(self._entities)):
+                            self._entityIndex = 0
+                            checkdup = False
+                        temp = self._entities[self._entityIndex]
+                    del self._selectedSprite
+                    self._selectedSprite = temp.clone()
+                elif (event.key == pygame.K_ESCAPE): # Escape the game
+                    self._isRunning = False
+                    return
+    
+        
+        self._mousepos = pygame.Vector2(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1])
+                    
         if (not self._editingLevelEnabled):
             # handle _entities update
             for entity in self._entities:
