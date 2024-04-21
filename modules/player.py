@@ -7,13 +7,12 @@ class Player(sprites.Sprite):
     _jumpingTo = 0
     speed = 5
 
-    def __init__(self, image_path,x,y):
-        super().__init__(image_path,x,y,"Player")
+    def __init__(self, image_path,x,y,tag="Player"):
+        super().__init__(image_path,x,y,tag)
 
     def update(self, entities):
         # affect gravity
         velocity = [0,0]
-        verticalVelocity = 0
 
         velocity[1] += self.gravityValue
        

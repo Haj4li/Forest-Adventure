@@ -13,6 +13,7 @@ def LoadImage(path):
 class Sprite():
     def __init__(self, image_path, x,y,tag="NOTAGE"):
         global images
+        self._imgpath = image_path
         if image_path in images.keys():
             self._image = images[image_path]
         else:
@@ -36,6 +37,10 @@ class Sprite():
     def update(self, args=None):
         pass
 
+    def clone(self):
+        print(self._imgpath)
+        return type(self)(self._imgpath,self.rect.x,self.rect.y,self.tag)
+    
     def draw(self, surface):
         surface.blit(self.image, self.rect)
 
