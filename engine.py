@@ -30,19 +30,16 @@ class Game:
         pygame.display.set_caption(title)
         self._clock = pygame.time.Clock()
         self._font =pygame.font.Font(None, 15)
-        self._mainCamera = Camera(0,0)
+        self._mainCamera = Camera(screen_width/2,screen_height/2)
         pass
 
 
     def _start(self):
-        # TODO: seprate editing entities from other
         # add all entities to the editor entities if editing is enabled
         
         self._editorModeEntities.append(Player("assets/fox.png",0,0))
         self._editorModeEntities.append(Sprite("assets/ground.png",0,0,"ground"))
-
-        # TODO: remove entities with right click
-        # TODO: remove add entity function 
+        
         # check saved level
         if (os.path.exists("level.lfa")):
             # load entities from level.lfa
@@ -51,7 +48,7 @@ class Game:
                 self._entities.append(eval(line))
             
         if (self._editingLevelEnabled):
-            self._selectedSprite = self._entities[0].clone()
+            self._selectedSprite = self._editorModeEntities[0].clone()
         pass
 
     def _updateCameraRect(self):
@@ -117,8 +114,8 @@ class Game:
             # handle _entities update
             for entity in self._entities:
                 if (entity.tag == "Player"):
-                    entity.update(self._entities)
-                    if (not self._mainCamera.IsFollowing()):
+                    entity.update(self._entities) # update player
+                    if (not self._mainCamera.IsFollowing()): # update main camera if not following anything
                         self._mainCamera.Follow(entity.rect)
                 else:
                     entity.update()
@@ -146,7 +143,7 @@ class Game:
             text_render = self._font.render(f"Map has not Saved.", True, (0,0, 0))
         text_rect = text_render.get_rect()
         text_rect.x = 50
-        text_rect.y = 100
+        text_rect.y = 75
         self._screen.blit(text_render, text_rect)
         pass
 
