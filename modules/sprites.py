@@ -1,21 +1,5 @@
 import pygame
 
-import hashlib
-
-def calculate_md5(data):
-    # Create an instance of the MD5 hash object
-    md5_hash = hashlib.md5()
-
-    # Update the hash object with the data
-    if isinstance(data, str):
-        data = data.encode()  # Convert string to bytes
-    md5_hash.update(data)
-
-    # Get the hexadecimal representation of the hash
-    hex_digest = md5_hash.hexdigest()
-
-    return hex_digest
-
 images = {}
 
 def LoadImage(path):
@@ -41,8 +25,6 @@ class Sprite():
         self.rect.y = y
         self.position = pygame.Vector2(x, y)
         self.tag = tag
-
-        self.hash = calculate_md5(image_path)
     
     def rotate(self, angle):
         self.image = pygame.transform.rotate(self._image, angle)

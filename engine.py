@@ -2,7 +2,7 @@ import pygame
 import os
 from modules.sprites import *
 from modules.player import Player
-
+from modules.camera import Camera
 
 class Game:
     _isRunning = True
@@ -13,34 +13,34 @@ class Game:
     _mousepos = pygame.Vector2(0,0)
     _font = None
     _removeFlag = False
+    _mapSaved = []
+    _editorCam = None
 
     # camera handler
 
     # _entities list
     _entities = []
-    _editorModeEntities = { }
+    _editorModeEntities = []
 
     def __init__(self, title, screen_width, screen_height):
         pygame.init()
         self._screen = pygame.display.set_mode((screen_width, screen_height))  ## pygame.FULLSCREEN
+        self._editorCam = pygame.Rect(screen_width/2, screen_height/2, 1,1)
+
         pygame.display.set_caption(title)
         self._clock = pygame.time.Clock()
         self._font =pygame.font.Font(None, 15)
-        self._entityKeys = self._editorModeEntities.keys()
+        self._mainCamera = Camera(0,0)
         pass
-
-    def _addEntity(self, entity):
-        if (not entity.hash in self._entityKeys):
-            self._editorModeEntities[entity.hash] = entity.clone()
-            self._entityKeys = self._editorModeEntities.keys()
-            if (self._loggingEnabled):
-                print(f"Entity {entity.hash} added to editor")
-
-        self._entities.append(entity)
 
 
     def _start(self):
         # TODO: seprate editing entities from other
+        # add all entities to the editor entities if editing is enabled
+        
+        self._editorModeEntities.append(Player("assets/fox.png",0,0))
+        self._editorModeEntities.append(Sprite("assets/ground.png",0,0,"ground"))
+
         # TODO: remove entities with right click
         # TODO: remove add entity function 
         # check saved level
@@ -48,19 +48,24 @@ class Game:
             # load entities from level.lfa
             loadLevel = open("level.lfa", "r").readlines()
             for line in loadLevel:
-                self._addEntity(eval(line))
-        else:
-            # add sprites
-            _player = Player("assets/fox.png",50,50)
-            # _player.gravityValue = 0
-            
-            self._addEntity(_player)
-            for i in range (10):
-                self._addEntity(Sprite("assets/ground.png",i*64,500,"ground"))
+                self._entities.append(eval(line))
             
         if (self._editingLevelEnabled):
             self._selectedSprite = self._entities[0].clone()
         pass
+
+    def _updateCameraRect(self):
+        if (self._editingLevelEnabled):
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_a]:
+                self._editorCam.x -= 5
+            elif keys[pygame.K_d]:
+                 self._editorCam.x += 5
+            elif keys[pygame.K_w]:
+                 self._editorCam.y -= 5
+            elif keys[pygame.K_s]:
+                 self._editorCam.y += 5
+            
 
     def _update(self):
         # handle events
@@ -69,27 +74,36 @@ class Game:
                 self._isRunning = False
                 return
             elif event.type == pygame.MOUSEBUTTONUP:
-                if self._editingLevelEnabled and event.button == 1:
-                    self._addEntity(self._selectedSprite.clone())
+                if self._editingLevelEnabled and event.button == 1: # add new entity to the game
+                    self._mapSaved = False
+                    self._entities.append(self._selectedSprite.clone())
+                elif self._editingLevelEnabled and event.button == 3: # remove hovering entity from the game
+                    self._removeFlag = True
             
             # handle user input
             elif event.type == pygame.KEYUP:
                 if (event.key == pygame.K_TAB): # change game mode (Game/Editor)
                     self._editingLevelEnabled = not self._editingLevelEnabled
+                    if (self._editingLevelEnabled):
+                        self._mainCamera.Follow(self._editorCam)
+                    else:
+                        self._mainCamera.UnFollow()
+
                 elif (self._editingLevelEnabled and event.key == pygame.K_e): # select next entity editor mode 
                     self._entityIndex += 1
-                    keys = list(self._editorModeEntities.keys())
-                    if (self._entityIndex >= len(keys)):
+                    if (self._entityIndex >= len(self._editorModeEntities)):
                         self._entityIndex = 0
-                    values = list(self._editorModeEntities.values())
                     del self._selectedSprite
-                    self._selectedSprite = values[self._entityIndex].clone()
+                    self._selectedSprite = self._editorModeEntities[self._entityIndex].clone()
+                elif (event.key == pygame.K_F2 and self._editingLevelEnabled): # clear the map 
+                    self._entities.clear()
                 elif (event.key == pygame.K_F1): # Save the game
                     so = open("level.lfa",'w')
                     id = 0
                     for entity in self._entities:
                         id +=1
                         so.write(f"{entity.getEval()} # entity # {id}\n")
+                    self._mapSaved = True
                     so.close()
                 elif (event.key == pygame.K_ESCAPE): # Escape the game
                     self._isRunning = False
@@ -97,24 +111,28 @@ class Game:
     
         
         self._mousepos = pygame.Vector2(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1])
-                    
+
+        # handle game conditions
         if (not self._editingLevelEnabled):
             # handle _entities update
             for entity in self._entities:
                 if (entity.tag == "Player"):
                     entity.update(self._entities)
+                    if (not self._mainCamera.IsFollowing()):
+                        self._mainCamera.Follow(entity.rect)
                 else:
                     entity.update()
-    
         elif (self._editingLevelEnabled and self._selectedSprite != None):
-            self._removeFlag = False
+            if (not self._mainCamera.IsFollowing()):
+                self._mainCamera.Follow(self._editorCam)
+            self._updateCameraRect()
             # limit the position of mouse and selected sprite
             # due to the sprite rect
             fixedPos = pygame.Vector2(int(self._mousepos.x / self._selectedSprite.rect.width)*self._selectedSprite.rect.width,int(self._mousepos.y / self._selectedSprite.rect.height)*self._selectedSprite.rect.height)
             self._selectedSprite.setPosition(fixedPos)
 
-        # handle game conditions
-        pass
+        # Update the main Camera
+        self._mainCamera.Update(self._entities)
 
     def _drawLog(self):
         text_render = self._font.render(f"Total Entities {len(self._entities)} Loaded Images {len(images)} Mouse Pos {self._mousepos}", True, (0,0, 0))
@@ -122,16 +140,31 @@ class Game:
         text_rect.x = 50
         text_rect.y = 50
         self._screen.blit(text_render, text_rect)
+        if (self._mapSaved):
+            text_render = self._font.render(f"Map Saved !", True, (0,0, 0))
+        else:
+            text_render = self._font.render(f"Map has not Saved.", True, (0,0, 0))
+        text_rect = text_render.get_rect()
+        text_rect.x = 50
+        text_rect.y = 100
+        self._screen.blit(text_render, text_rect)
         pass
 
     def _draw(self):
         # fill screen with white color
         self._screen.fill((255,255,255))
 
+
         # draw _entities
         for entity in self._entities:
-            entity.draw(self._screen)
-        if (self._selectedSprite != None):
+            if (self._removeFlag == True and entity.rect.collidepoint(self._mousepos)) : # check hovering entity and remove it from list
+                self._removeFlag = False
+                self._entities.remove(entity)
+            else:
+                entity.draw(self._screen)
+        
+
+        if (self._selectedSprite != None and self._editingLevelEnabled):
             self._selectedSprite.draw(self._screen)
         # draw logs
         if (self._loggingEnabled):
