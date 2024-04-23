@@ -1,5 +1,6 @@
 import pygame
 import os
+
 from modules.sprites import *
 from modules.player import Player
 from modules.camera import Camera
@@ -38,8 +39,9 @@ class Game:
         # add all entities to the editor entities if editing is enabled
         
         self._editorModeEntities.append(Player("assets/fox.png",0,0))
-        self._editorModeEntities.append(Sprite("assets/ground.png",0,0,"ground"))
-        
+        for i in range(1,10):
+            self._editorModeEntities.append(Sprite(f"assets/Tiles/Tile_0{i}.png",0,0,"ground"))
+
         # check saved level
         if (os.path.exists("level.lfa")):
             # load entities from level.lfa
@@ -47,9 +49,9 @@ class Game:
             for line in loadLevel:
                 self._entities.append(eval(line))
             
-        if (self._editingLevelEnabled):
-            self._selectedSprite = self._editorModeEntities[0].clone()
-        pass
+
+        self._selectedSprite = self._editorModeEntities[0].clone()
+        
 
     def _updateCameraRect(self):
         if (self._editingLevelEnabled):
