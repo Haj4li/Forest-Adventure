@@ -5,6 +5,8 @@ from modules.sprites import *
 from modules.player import Player
 from modules.camera import Camera
 
+from modules.clouds import Cloud
+
 class Game:
     _isRunning = True
     _loggingEnabled = True
@@ -25,6 +27,8 @@ class Game:
 
     def __init__(self, title, screen_width, screen_height):
         pygame.init()
+        self.screen_width = screen_width
+        self.screen_height = screen_height
         self._screen = pygame.display.set_mode((screen_width, screen_height))  ## pygame.FULLSCREEN
         self._editorCam = pygame.Rect(screen_width/2, screen_height/2, 1,1)
 
@@ -39,8 +43,13 @@ class Game:
         # add all entities to the editor entities if editing is enabled
         
         self._editorModeEntities.append(Player("assets/fox.png",0,0))
-        for i in range(1,10):
-            self._editorModeEntities.append(Sprite(f"assets/Tiles/Tile_0{i}.png",0,0,"ground"))
+        self._editorModeEntities.append(Sprite("assets/s1.png",0,0,"ground"))
+        
+        self._editorModeEntities.append(Cloud("assets/cl.png",0,0))
+
+        
+        # for i in range(1,10):
+        #     self._editorModeEntities.append(Sprite(f"assets/Tiles/Tile_0{i}.png",0,0,"ground"))
 
         # check saved level
         if (os.path.exists("level.lfa")):
@@ -161,7 +170,11 @@ class Game:
                 self._entities.remove(entity)
             else:
                 entity.draw(self._screen)
-        
+
+        offset_y=self.screen_height-64
+        for i in range(0,len(self._editorModeEntities)):
+            self._editorModeEntities[i].drawAt((i*32) + (5*i),offset_y,self._screen)
+
 
         if (self._selectedSprite != None and self._editingLevelEnabled):
             self._selectedSprite.draw(self._screen)

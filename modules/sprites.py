@@ -41,6 +41,10 @@ class Sprite():
     
     def draw(self, surface):
         surface.blit(self.image, self.rect)
+    
+    def drawAt(self, x, y,surface):
+        surface.blit(self.image, pygame.Rect(x,y,self.rect.width,self.rect.height))
+    
 
     def move(self, dx, dy):
         self.rect.x += dx
