@@ -37,6 +37,6 @@ class Camera:
             for entity in entities:
                 if (entity != self._follow):
                     entity.move(-moveto[0],-moveto[1])
-            
+
             self._follow.x = self._follow_last[0]
             self._follow.y = self._follow_last[1]
