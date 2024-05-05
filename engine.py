@@ -62,7 +62,8 @@ class Game:
         
         self._editorModeEntities.append(Player("assets/fox.png",0,0))
         self._editorModeEntities.append(Sprite("assets/s1.png",0,0,"ground"))
-        
+        self._editorModeEntities.append(Sprite("assets/tree.png",0,0,"tree"))
+        self._editorModeEntities.append(Sprite("assets/coin.png",0,0,"money"))
         self._editorModeEntities.append(Cloud("assets/cl.png",0,0))
 
         self._selectedSprite = self._editorModeEntities[0].clone()
