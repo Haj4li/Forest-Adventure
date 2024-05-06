@@ -1,5 +1,13 @@
 import pygame
 
+# TODO:
+# fix the sprite rect
+# fix drawAt function for new sprites
+# fix eval function
+
+
+
+
 images = {}
 
 def LoadImage(path):
@@ -39,11 +47,17 @@ class Sprite():
         self.cols = total_cols
         self.frame_width = self.rect.width // self.cols
         self.frame_height = self.rect.height // self.rows
+        self.frame_rect = self.rect
+        
+        self.frame_rect.width = self.frame_width
+        self.frame_rect.height = self.frame_height
+
 
     def addAnimation(self, name, row, frames,speed, loop):
         self._animations[name] = (row, frames, speed, loop)
 
     def setAnimation(self,animation):
+
         self.current_animation = animation
         self.current_frame_index = 0
         self.last_frame_update = pygame.time.get_ticks()
@@ -63,18 +77,20 @@ class Sprite():
         self.image = pygame.transform.rotate(self._image, angle)
 
     def setPosition(self, position):
-        self.rect.x = position.x
-        self.rect.y = position.y
+        self.frame_rect.x = position.x
+        self.frame_rect.y = position.y
     
     def update(self, args=None):
         pass
 
     def clone(self):
-        cloned = type(self)(self._imgpath,self.rect.x,self.rect.y,self.tag)
+        cloned = type(self)(self._imgpath,self.frame_rect.x,self.frame_rect.y,self.tag)
+        cloned.setupSpritesheet(self.rows,self.cols)
         if (len(self._animations) > 0):
             for anims in self._animations.keys():
                 cloned.addAnimation(anims,self._animations[anims][0],self._animations[anims][1],self._animations[anims][2],self._animations[anims][3])
-            cloned.setAnimation(self.current_animation)
+            if (self.current_animation != None):
+                cloned.setAnimation(self.current_animation)
         return cloned
 
     def draw(self, surface):
@@ -94,15 +110,15 @@ class Sprite():
                         self.playing_animation = False
 
         frame = self.image.subsurface(pygame.Rect(self.current_frame_index*self.frame_width, self.current_row*self.frame_height, self.frame_width,self.frame_height)).convert_alpha()
-        surface.blit(frame, self.rect)
+        surface.blit(frame, self.frame_rect)
     
     def drawAt(self, x, y,surface):
-        surface.blit(self.image, pygame.Rect(x,y,self.rect.width,self.rect.height))
+        surface.blit(self.image, pygame.Rect(x,y,self.frame_rect.width,self.frame_rect.height))
     
 
     def move(self, dx, dy):
-        self.rect.x += dx
-        self.rect.y += dy
+        self.frame_rect.x += dx
+        self.frame_rect.y += dy
     
     def getEval(self):
-        return f"Sprite('{self._imgpath}',{self.rect.x},{self.rect.y},'{self.tag}')"
+        return f"Sprite('{self._imgpath}',{self.frame_rect.x},{self.frame_rect.y},'{self.tag}')"

@@ -70,6 +70,13 @@ class Game:
         self._editorModeEntities.append(Cloud("assets/cl.png",0,0))
 
         self._selectedSprite = self._editorModeEntities[0].clone()
+
+        character = Sprite("assets/character.png",200,200,'players')
+        character.setupSpritesheet(1,4)
+        character.addAnimation('idle',0,4,200,True)
+        character.playAnimation('idle')
+        
+        self._editorModeEntities.append(character)
         
 
     def _updateCameraRect(self):
