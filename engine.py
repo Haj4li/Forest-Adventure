@@ -18,6 +18,7 @@ class Game:
     _mapSaved = False
     _editorCam = None
     _scenes = []
+    _controlHeld = False
 
     # camera handler
 
@@ -67,6 +68,11 @@ class Game:
         
         self._editorModeEntities.append(Sprite("assets/coin.png",0,0,"money"))
 
+        self._editorModeEntities.append(Sprite("assets/greeen.png",0,0,"object"))
+        self._editorModeEntities.append(Sprite("assets/green.png",0,0,"object"))
+        self._editorModeEntities.append(Sprite("assets/Rock.png",0,0,"ground"))
+
+
         self._editorModeEntities.append(Cloud("assets/cl.png",0,0))
 
         self._selectedSprite = self._editorModeEntities[0].clone()
@@ -94,6 +100,7 @@ class Game:
 
     def _update(self):
         # handle events
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self._isRunning = False
@@ -104,7 +111,9 @@ class Game:
                     self._entities.append(self._selectedSprite.clone())
                 elif self._editingLevelEnabled and event.button == 3: # remove hovering entity from the game
                     self._removeFlag = True
-            
+            elif event.type == pygame.KEYDOWN:
+                if (event.key == pygame.K_LCTRL):
+                    self._controlHeld = True
             # handle user input
             elif event.type == pygame.KEYUP:
                 if (event.key == pygame.K_TAB): # change game mode (Game/Editor)
@@ -113,7 +122,8 @@ class Game:
                         self._mainCamera.Follow(self._editorCam)
                     else:
                         self._mainCamera.UnFollow()
-
+                elif (event.key == pygame.K_LCTRL):
+                    self._controlHeld = False
                 elif (self._editingLevelEnabled and event.key == pygame.K_e): # select next entity editor mode 
                     self._entityIndex += 1
                     if (self._entityIndex >= len(self._editorModeEntities)):
@@ -157,7 +167,10 @@ class Game:
             self._updateCameraRect()
             # limit the position of mouse and selected sprite
             # due to the sprite rect
-            fixedPos = pygame.Vector2(int(self._mousepos.x / self._selectedSprite.rect.width)*self._selectedSprite.rect.width,int(self._mousepos.y / self._selectedSprite.rect.height)*self._selectedSprite.rect.height)
+            if (self._controlHeld):
+                fixedPos = pygame.Vector2(int(self._mousepos.x / self._selectedSprite.rect.width)*self._selectedSprite.rect.width,int(self._mousepos.y / self._selectedSprite.rect.height)*self._selectedSprite.rect.height)
+            else:
+                fixedPos = self._mousepos
             self._selectedSprite.setPosition(fixedPos)
 
         # Update the main Camera
