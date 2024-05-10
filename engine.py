@@ -4,7 +4,6 @@ import os
 from modules.sprites import *
 from modules.player import Player
 from modules.camera import Camera
-
 from modules.clouds import Cloud
 
 class Game:
@@ -16,8 +15,9 @@ class Game:
     _mousepos = pygame.Vector2(0,0)
     _font = None
     _removeFlag = False
-    _mapSaved = []
+    _mapSaved = False
     _editorCam = None
+    _scenes = []
 
     # camera handler
 
@@ -38,28 +38,45 @@ class Game:
         self._mainCamera = Camera(screen_width/2,screen_height/2)
         pass
 
+    def _loadScene(self,scene_index):
+        if (scene_index <= len(self._scenes)-1):
+            # clear entities
+            self._entities.clear()
+            # load new scene
+            scenepath = self._scenes[scene_index]
+            # check saved level
+            if (os.path.exists(scenepath)):
+                # load entities from level.lfa
+                loadLevel = open(scenepath, "r").readlines()
+                for line in loadLevel:
+                    self._entities.append(eval(line))
+        else:
+            print(f"Error in loading scene {scene_index} .")
 
     def _start(self):
+        # add game scenes
+        self._scenes.append('level1.lfa')
+        self._scenes.append('level2.lfa')
+
         # add all entities to the editor entities if editing is enabled
         
         self._editorModeEntities.append(Player("assets/fox.png",0,0))
         self._editorModeEntities.append(Sprite("assets/s1.png",0,0,"ground"))
+
+        self._editorModeEntities.append(Sprite("assets/tree.png",0,0,"tree"))
         
+        self._editorModeEntities.append(Sprite("assets/coin.png",0,0,"money"))
+
         self._editorModeEntities.append(Cloud("assets/cl.png",0,0))
 
-        
-        # for i in range(1,10):
-        #     self._editorModeEntities.append(Sprite(f"assets/Tiles/Tile_0{i}.png",0,0,"ground"))
-
-        # check saved level
-        if (os.path.exists("level.lfa")):
-            # load entities from level.lfa
-            loadLevel = open("level.lfa", "r").readlines()
-            for line in loadLevel:
-                self._entities.append(eval(line))
-            
-
         self._selectedSprite = self._editorModeEntities[0].clone()
+
+        character = Sprite("assets/character.png",200,200,'players')
+        character.setupSpritesheet(1,4)
+        character.addAnimation('idle',0,4,200,True)
+        character.playAnimation('idle')
+        
+        self._editorModeEntities.append(character)
         
 
     def _updateCameraRect(self):
@@ -103,9 +120,9 @@ class Game:
                         self._entityIndex = 0
                     del self._selectedSprite
                     self._selectedSprite = self._editorModeEntities[self._entityIndex].clone()
-                elif (event.key == pygame.K_F2 and self._editingLevelEnabled): # clear the map 
+                elif (event.key == pygame.K_DELETE and self._editingLevelEnabled): # clear the map 
                     self._entities.clear()
-                elif (event.key == pygame.K_F1): # Save the game
+                elif (event.key == pygame.K_z): # Save the game
                     so = open("level.lfa",'w')
                     id = 0
                     for entity in self._entities:
@@ -113,6 +130,10 @@ class Game:
                         so.write(f"{entity.getEval()} # entity # {id}\n")
                     self._mapSaved = True
                     so.close()
+                elif (event.key == pygame.K_1):
+                    self._loadScene(0)
+                elif (event.key == pygame.K_2):
+                    self._loadScene(1)
                 elif (event.key == pygame.K_ESCAPE): # Escape the game
                     self._isRunning = False
                     return
