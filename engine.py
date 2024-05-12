@@ -89,11 +89,11 @@ class Game:
 
         self._selectedSprite = self._editorModeEntities[0].clone()
 
-        character = Player("assets/character.png",200,200)
-        character.setupSpritesheet(1,4)
+        character = Player("assets/FrameSabet.png",200,200)
+        character.setupSpritesheet(1,8)
 
-        character.addAnimation('idle',0,4,200,True)
-        character.addAnimation('run',0,4,200,True)
+        character.addAnimation('idle',0,8,200,True)
+        character.addAnimation('run',0,8,200,True)
 
         character.playAnimation('idle')
         # character = Player("assets/knight.png",200,200)
