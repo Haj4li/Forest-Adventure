@@ -34,9 +34,10 @@ class Camera:
         if (self._follow.x != self._follow_last[0] or self._follow.y != self._follow_last[1]):
             moveto = [self._follow.x - self._follow_last[0] , self._follow.y - self._follow_last[1]]
             
-            for entity in entities:
-                if (entity != self._follow):
-                    entity.move(-moveto[0],-moveto[1])
+            for layer in entities.keys():
+                for entity in entities[layer]:
+                    if (entity != self._follow):
+                        entity.move(-moveto[0],-moveto[1])
 
             self._follow.x = self._follow_last[0]
             self._follow.y = self._follow_last[1]

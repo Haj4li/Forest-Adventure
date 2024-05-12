@@ -3,7 +3,7 @@ from modules import sprites
 
 class Player(sprites.Sprite):
     gravityValue = 5
-    jumpForce = 20
+    jumpForce = 10
     _jumpingTo = 0
     speed = 5
     _coins = 0
@@ -31,23 +31,24 @@ class Player(sprites.Sprite):
         _isgrounded = False
         canJump = True
         prect = pygame.Rect((self.rect.x) + velocity[0],(self.rect.y) + velocity[1],self.rect.width,self.rect.height)
-        for entity in entities:
-            if entity.tag == "ground" and prect.colliderect(entity.rect):
-                # check down 
-                if (not _isgrounded and pygame.Rect((self.rect.x),(self.rect.y)+ velocity[1],self.rect.width,self.rect.height).colliderect(entity.rect)):
-                    _isgrounded = True
-                # check up (so player can jump if it's clear)
-                if (canJump and pygame.Rect((self.rect.x),(self.rect.y) - self.gravityValue,self.rect.width,self.rect.height).colliderect(entity.rect)):
-                    canJump = False
-                # check left and right
-                if (canMove and pygame.Rect((self.rect.x) + velocity[0],(self.rect.y),self.rect.width,self.rect.height).colliderect(entity.rect)):
-                    canMove = False
-                
-                if (not canMove and _isgrounded and not canJump ):
-                    break
-            elif entity.tag == "money" and prect.colliderect(entity.rect):
-                self._coins += 1
-                entities.remove(entity)
+        for layer in entities.keys():
+            for entity in entities[layer]:
+                if entity.tag == "ground" and prect.colliderect(entity.rect):
+                    # check down 
+                    if (not _isgrounded and pygame.Rect((self.rect.x),(self.rect.y)+ velocity[1],self.rect.width,self.rect.height).colliderect(entity.rect)):
+                        _isgrounded = True
+                    # check up (so player can jump if it's clear)
+                    if (canJump and pygame.Rect((self.rect.x),(self.rect.y) - self.gravityValue,self.rect.width,self.rect.height).colliderect(entity.rect)):
+                        canJump = False
+                    # check left and right
+                    if (canMove and pygame.Rect((self.rect.x) + velocity[0],(self.rect.y),self.rect.width,self.rect.height).colliderect(entity.rect)):
+                        canMove = False
+                    
+                    if (not canMove and _isgrounded and not canJump ):
+                        break
+                elif entity.tag == "money" and prect.colliderect(entity.rect):
+                    self._coins += 1
+                    entities.remove(entity)
 
         # jump
         if keys[pygame.K_w] and _isgrounded and canJump:

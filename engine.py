@@ -20,10 +20,13 @@ class Game:
     _scenes = []
     _controlHeld = False
 
+    _maxLayers = 7
+    _currentLayer = 0
+
     # camera handler
 
     # _entities list
-    _entities = []
+    _entities = {0:[],1:[],2:[],3:[],4:[],5:[],6:[],7:[]}
     _editorModeEntities = []
 
     def __init__(self, title, screen_width, screen_height):
@@ -50,7 +53,7 @@ class Game:
                 # load entities from level.lfa
                 loadLevel = open(scenepath, "r").readlines()
                 for line in loadLevel:
-                    self._entities.append(eval(line))
+                    self._entities[0].append(eval(line))
         else:
             print(f"Error in loading scene {scene_index} .")
 
@@ -61,7 +64,7 @@ class Game:
 
         # add all entities to the editor entities if editing is enabled
         
-        self._editorModeEntities.append(Player("assets/fox.png",0,0))
+        # self._editorModeEntities.append(Player("assets/fox.png",0,0))
         self._editorModeEntities.append(Sprite("assets/s1.png",0,0,"ground"))
 
         self._editorModeEntities.append(Sprite("assets/tree.png",0,0,"tree"))
@@ -77,7 +80,7 @@ class Game:
 
         self._selectedSprite = self._editorModeEntities[0].clone()
 
-        character = Sprite("assets/character.png",200,200,'players')
+        character = Player("assets/character.png",200,200)
         character.setupSpritesheet(1,4)
         character.addAnimation('idle',0,4,200,True)
         character.playAnimation('idle')
@@ -108,7 +111,7 @@ class Game:
             elif event.type == pygame.MOUSEBUTTONUP:
                 if self._editingLevelEnabled and event.button == 1: # add new entity to the game
                     self._mapSaved = False
-                    self._entities.append(self._selectedSprite.clone())
+                    self._entities[self._currentLayer].append(self._selectedSprite.clone())
                 elif self._editingLevelEnabled and event.button == 3: # remove hovering entity from the game
                     self._removeFlag = True
             elif event.type == pygame.KEYDOWN:
@@ -135,15 +138,27 @@ class Game:
                 elif (event.key == pygame.K_z): # Save the game
                     so = open("level.lfa",'w')
                     id = 0
-                    for entity in self._entities:
-                        id +=1
-                        so.write(f"{entity.getEval()} # entity # {id}\n")
+                    for layer in self._entities.keys():
+                        for entity in self._entities[layer]:
+                            id +=1
+                            so.write(f"{entity.getEval()} # entity # {id}\n")
                     self._mapSaved = True
                     so.close()
                 elif (event.key == pygame.K_1):
-                    self._loadScene(0)
+                    self._currentLayer = 0
                 elif (event.key == pygame.K_2):
-                    self._loadScene(1)
+                    self._currentLayer = 1
+                elif (event.key == pygame.K_3):
+                    self._currentLayer = 2
+                elif (event.key == pygame.K_4):
+                    self._currentLayer = 3
+                elif (event.key == pygame.K_5):
+                    self._currentLayer = 4
+                elif (event.key == pygame.K_6):
+                    self._currentLayer = 5
+                elif (event.key == pygame.K_7):
+                    self._currentLayer = 6
+                
                 elif (event.key == pygame.K_ESCAPE): # Escape the game
                     self._isRunning = False
                     return
@@ -154,13 +169,14 @@ class Game:
         # handle game conditions
         if (not self._editingLevelEnabled):
             # handle _entities update
-            for entity in self._entities:
-                if (entity.tag == "Player"):
-                    entity.update(self._entities) # update player
-                    if (not self._mainCamera.IsFollowing()): # update main camera if not following anything
-                        self._mainCamera.Follow(entity.rect)
-                else:
-                    entity.update()
+            for layer in self._entities.keys():
+                for entity in self._entities[layer]:
+                    if (entity.tag == "Player"):
+                        entity.update(self._entities) # update player
+                        if (not self._mainCamera.IsFollowing()): # update main camera if not following anything
+                            self._mainCamera.Follow(entity.rect)
+                    else:
+                        entity.update()
         elif (self._editingLevelEnabled and self._selectedSprite != None):
             if (not self._mainCamera.IsFollowing()):
                 self._mainCamera.Follow(self._editorCam)
@@ -177,11 +193,15 @@ class Game:
         self._mainCamera.Update(self._entities)
 
     def _drawLog(self):
-        text_render = self._font.render(f"Total Entities {len(self._entities)} Loaded Images {len(images)} Mouse Pos {self._mousepos}", True, (0,0, 0))
+        enc = 0
+        for layer in self._entities.keys():
+            enc += len(self._entities[layer])
+        text_render = self._font.render(f"Total Entities {enc} Loaded Images {len(images)} Mouse Pos {self._mousepos}", True, (0,0, 0))
         text_rect = text_render.get_rect()
         text_rect.x = 50
         text_rect.y = 50
         self._screen.blit(text_render, text_rect)
+
         if (self._mapSaved):
             text_render = self._font.render(f"Map Saved !", True, (0,0, 0))
         else:
@@ -190,6 +210,13 @@ class Game:
         text_rect.x = 50
         text_rect.y = 75
         self._screen.blit(text_render, text_rect)
+
+        text_render = self._font.render(f"Current Layer: {self._currentLayer}", True, (0,0, 0))
+        text_rect = text_render.get_rect()
+        text_rect.x = 50
+        text_rect.y = 100
+        self._screen.blit(text_render, text_rect)
+
         pass
 
     def _draw(self):
@@ -198,12 +225,13 @@ class Game:
 
 
         # draw _entities
-        for entity in self._entities:
-            if (self._removeFlag == True and entity.rect.collidepoint(self._mousepos)) : # check hovering entity and remove it from list
-                self._removeFlag = False
-                self._entities.remove(entity)
-            else:
-                entity.draw(self._screen)
+        for layer in self._entities.keys():
+            for entity in self._entities[layer]:
+                if (self._removeFlag == True and entity.rect.collidepoint(self._mousepos)) : # check hovering entity and remove it from list
+                    self._removeFlag = False
+                    self._entities[layer].remove(entity)
+                else:
+                    entity.draw(self._screen)
 
         offset_y=self.screen_height-64
         for i in range(0,len(self._editorModeEntities)):
