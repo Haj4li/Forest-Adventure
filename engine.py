@@ -80,7 +80,8 @@ class Game:
         self._editorModeEntities.append(Sprite("assets/tree2.png",0,0,"tree"))
         self._editorModeEntities.append(Sprite("assets/coin.png",0,0,"money"))
         self._editorModeEntities.append(Sprite("assets/greeen.png",0,0,"object"))
-        self._editorModeEntities.append(Sprite("assets/green.png",0,0,"object"))
+        self._editorModeEntities.append(Sprite("assets/signleft.png",0,0,"object"))
+        self._editorModeEntities.append(Sprite("assets/signright.png",0,0,"object"))
         self._editorModeEntities.append(Sprite("assets/Rock.png",0,0,"ground"))
 
 
@@ -243,14 +244,18 @@ class Game:
 
 
         # draw _entities
+        deleted = False
         for layer in self._entities.keys():
             for entity in self._entities[layer]:
                 if (self._removeFlag == True and entity.rect.collidepoint(self._mousepos)) : # check hovering entity and remove it from list
                     self._removeFlag = False
+                    deleted = True
                     self._entities[layer].remove(entity)
                 else:
                     entity.draw(self._screen)
-
+        if (deleted == False):
+            self._removeFlag = False
+        
         if (self._editingLevelEnabled):
             offset_y=self.screen_height-64
             for i in range(0,len(self._editorModeEntities)):
