@@ -55,6 +55,7 @@ class Game:
             self._entities = {0:[],1:[],2:[],3:[],4:[],5:[],6:[],7:[]}
             # load new scene
             scenepath = self._scenes[scene_index]
+            self._mainCamera.UnFollow()
             # check saved level
             if (os.path.exists(scenepath)):
                 # load entities from level.lfa
@@ -140,6 +141,12 @@ class Game:
                         self._entityIndex = 0
                     del self._selectedSprite
                     self._selectedSprite = self._editorModeEntities[self._entityIndex].clone()
+                elif (self._editingLevelEnabled and event.key == pygame.K_q): # select previus entity editor mode 
+                    self._entityIndex -= 1
+                    if (self._entityIndex < 0):
+                        self._entityIndex = len(self._editorModeEntities)-1
+                    del self._selectedSprite
+                    self._selectedSprite = self._editorModeEntities[self._entityIndex].clone()
                 elif (event.key == pygame.K_DELETE and self._editingLevelEnabled): # clear the map 
                     self._entities.clear()
                     self._entities = {0:[],1:[],2:[],3:[],4:[],5:[],6:[],7:[]}
@@ -150,6 +157,8 @@ class Game:
                         for entity in self._entities[layer]:
                             id +=1
                             so.write(f"{entity.getEval()}\n")
+                    # todo: camera eval
+
                     self._mapSaved = True
                     so.close()
                 elif (event.key == pygame.K_1):
