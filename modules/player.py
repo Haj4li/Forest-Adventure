@@ -13,18 +13,26 @@ class Player(sprites.Sprite):
 
 
     def update(self, entities):
-        # affect gravity
+       
         velocity = [0,0]
 
-        velocity[1] += self.gravityValue
+        
        
         keys = pygame.key.get_pressed()
         if keys[pygame.K_a]:
             velocity[0] -= self.speed
+            super().playAnimation('run')
+            super().flip(True,False)
         if keys[pygame.K_d]:
             velocity[0] += self.speed
+            super().playAnimation('run')
+            super().flip(False,False)
         
-        
+        if (velocity == [0,0]):
+            super().playAnimation('idle')
+
+         # affect gravity
+        velocity[1] += self.gravityValue
 
         # check left and right
         canMove = True
@@ -74,6 +82,3 @@ class Player(sprites.Sprite):
 
     def getEval(self):
         return super().getEval('Player')
-    
-    def draw(self, surface):
-        super().draw(surface)

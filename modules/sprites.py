@@ -31,6 +31,9 @@ class Sprite():
         self.position = pygame.Vector2(x, y)
         self.tag = tag
 
+        self._fhorizontal = False
+        self._fvertical = False
+
         #animations
         self._animations = {}
         self.current_animation = None
@@ -64,7 +67,8 @@ class Sprite():
 
     def playAnimation(self,name):
         if (name in self._animations):
-            self.setAnimation(self._animations[name])
+            if (not self.current_animation == self._animations[name]):
+                self.setAnimation(self._animations[name])
 
 
     def stopAnimation(self):
@@ -91,7 +95,11 @@ class Sprite():
                 cloned.setAnimation(self.current_animation)
         return cloned
 
-    def draw(self, surface):
+    def flip(self,horizontal,vertical):
+        self._fhorizontal = horizontal
+        self._fvertical = vertical
+    
+    def draw(self, surface,position = None):
         # check animation state
         if (self.playing_animation and self.current_animation != None): # play animation frames
             current_time = pygame.time.get_ticks()
@@ -108,26 +116,20 @@ class Sprite():
                         self.playing_animation = False
 
         frame = self.image.subsurface(pygame.Rect(self.current_frame_index*self.frame_width, self.current_row*self.frame_height, self.frame_width,self.frame_height)).convert_alpha()
-        surface.blit(frame, self.frame_rect)
+        
+        flipped_frame = pygame.transform.flip(frame, self._fhorizontal, self._fvertical)
+        # Get the rectangle for the flipped frame
+        flipped_frame_rect = flipped_frame.get_rect()
+        flipped_frame_rect.x = self.frame_rect.x
+        flipped_frame_rect.y = self.frame_rect.y
+
+        if (position != None):
+            surface.blit(frame, pygame.Rect(position.x,position.y,flipped_frame_rect.width,flipped_frame_rect.height))
+        else:
+            surface.blit(flipped_frame, flipped_frame_rect)
     
     def drawAt(self, x, y,surface):
-        # check animation state
-        if (self.playing_animation and self.current_animation != None): # play animation frames
-            current_time = pygame.time.get_ticks()
-
-            if current_time - self.last_frame_update > self.current_animation[2]:
-                self.last_frame_update = current_time
-                self.current_frame_index += 1
-
-                if self.current_frame_index >= self.current_animation[1]:
-                    if self.current_animation[3]:
-                        self.current_frame_index = 0
-                    else:
-                        self.current_frame_index = len(self.frames) - 1
-                        self.playing_animation = False
-
-        frame = self.image.subsurface(pygame.Rect(self.current_frame_index*self.frame_width, self.current_row*self.frame_height, self.frame_width,self.frame_height)).convert_alpha()
-        surface.blit(frame, pygame.Rect(x,y,self.frame_rect.width,self.frame_rect.height))
+        self.draw(surface,pygame.Vector2(x,y))
     
 
     def move(self, dx, dy):

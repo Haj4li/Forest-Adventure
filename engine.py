@@ -89,9 +89,12 @@ class Game:
 
         self._selectedSprite = self._editorModeEntities[0].clone()
 
-        character = Player("assets/character.png",200,200)
-        character.setupSpritesheet(1,4)
-        character.addAnimation('idle',0,4,200,True)
+        character = Player("assets/knight.png",200,200)
+        character.setupSpritesheet(2,15)
+
+        character.addAnimation('idle',0,15,50,True)
+        character.addAnimation('run',1,8,50,True)
+
         character.playAnimation('idle')
         
         self._editorModeEntities.append(character)
@@ -101,13 +104,13 @@ class Game:
         if (self._editingLevelEnabled):
             keys = pygame.key.get_pressed()
             if keys[pygame.K_a]:
-                self._editorCam.x -= 5
+                self._editorCam.x -= 2
             elif keys[pygame.K_d]:
-                 self._editorCam.x += 5
+                 self._editorCam.x += 2
             elif keys[pygame.K_w]:
-                 self._editorCam.y -= 5
+                 self._editorCam.y -= 2
             elif keys[pygame.K_s]:
-                 self._editorCam.y += 5
+                 self._editorCam.y += 2
             
 
     def _update(self):
