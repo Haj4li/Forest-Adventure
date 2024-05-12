@@ -15,7 +15,7 @@ def LoadImage(path):
     return images[path]
 
 class Sprite():
-    _animations = {}
+    
     def __init__(self, image_path, x,y,tag="NOTAGE"):
         global images
         self._imgpath = image_path
@@ -32,6 +32,7 @@ class Sprite():
         self.tag = tag
 
         #animations
+        self._animations = {}
         self.current_animation = None
         self.current_frame_index = 0
         self.last_frame_update = pygame.time.get_ticks()
