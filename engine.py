@@ -74,11 +74,11 @@ class Game:
 
         # self._editorModeEntities.append(Player("assets/fox.png",0,0))
         self._editorModeEntities.append(Sprite("assets/s1.png",0,0,"ground"))
-
-        self._editorModeEntities.append(Sprite("assets/tree.png",0,0,"tree"))
+        self._editorModeEntities.append(Sprite("assets/wall.png",0,0,"ground"))
         
+        self._editorModeEntities.append(Sprite("assets/tree.png",0,0,"tree"))
+        self._editorModeEntities.append(Sprite("assets/tree2.png",0,0,"tree"))
         self._editorModeEntities.append(Sprite("assets/coin.png",0,0,"money"))
-
         self._editorModeEntities.append(Sprite("assets/greeen.png",0,0,"object"))
         self._editorModeEntities.append(Sprite("assets/green.png",0,0,"object"))
         self._editorModeEntities.append(Sprite("assets/Rock.png",0,0,"ground"))
@@ -251,9 +251,10 @@ class Game:
                 else:
                     entity.draw(self._screen)
 
-        offset_y=self.screen_height-64
-        for i in range(0,len(self._editorModeEntities)):
-            self._editorModeEntities[i].drawAt((i*32) + (5*i),offset_y,self._screen)
+        if (self._editingLevelEnabled):
+            offset_y=self.screen_height-64
+            for i in range(0,len(self._editorModeEntities)):
+                self._editorModeEntities[i].drawAt((i*32) + (5*i),offset_y,self._screen)
 
 
         if (self._selectedSprite != None and self._editingLevelEnabled):

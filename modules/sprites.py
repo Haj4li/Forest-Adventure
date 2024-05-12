@@ -111,7 +111,23 @@ class Sprite():
         surface.blit(frame, self.frame_rect)
     
     def drawAt(self, x, y,surface):
-        surface.blit(self.image, pygame.Rect(x,y,self.frame_rect.width,self.frame_rect.height))
+        # check animation state
+        if (self.playing_animation and self.current_animation != None): # play animation frames
+            current_time = pygame.time.get_ticks()
+
+            if current_time - self.last_frame_update > self.current_animation[2]:
+                self.last_frame_update = current_time
+                self.current_frame_index += 1
+
+                if self.current_frame_index >= self.current_animation[1]:
+                    if self.current_animation[3]:
+                        self.current_frame_index = 0
+                    else:
+                        self.current_frame_index = len(self.frames) - 1
+                        self.playing_animation = False
+
+        frame = self.image.subsurface(pygame.Rect(self.current_frame_index*self.frame_width, self.current_row*self.frame_height, self.frame_width,self.frame_height)).convert_alpha()
+        surface.blit(frame, pygame.Rect(x,y,self.frame_rect.width,self.frame_rect.height))
     
 
     def move(self, dx, dy):
