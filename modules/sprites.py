@@ -5,9 +5,6 @@ import pygame
 # fix drawAt function for new sprites
 # fix eval function
 
-
-
-
 images = {}
 
 def LoadImage(path):
@@ -120,5 +117,15 @@ class Sprite():
         self.frame_rect.x += dx
         self.frame_rect.y += dy
     
-    def getEval(self):
-        return f"Sprite('{self._imgpath}',{self.frame_rect.x},{self.frame_rect.y},'{self.tag}')"
+    def getEval(self,types = None):
+        if types is None:
+            types = 'Sprite'
+        evalstring = f"{types}('{self._imgpath}',{self.frame_rect.x},{self.frame_rect.y},'{self.tag}')"
+        evalstring += f";cloned.setupSpritesheet({self.rows},{self.cols})"
+        # evalstring = f"Sprite('{self._imgpath}',{self.frame_rect.x},{self.frame_rect.y},'{self.tag}')"
+        if (len(self._animations) > 0):
+            for anims in self._animations.keys():
+                evalstring += f";cloned.addAnimation('{anims}',{self._animations[anims][0]},{self._animations[anims][1]},{self._animations[anims][2]},{self._animations[anims][3]})"
+            if (self.current_animation != None):
+                evalstring += f";cloned.setAnimation({self.current_animation})"
+        return evalstring

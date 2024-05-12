@@ -17,4 +17,4 @@ class Cloud(sprites.Sprite):
         self.move(-1,0)
         
     def getEval(self):
-        return f"Cloud('{self._imgpath}',{self._startpos})"
+        return super().getEval('Cloud')

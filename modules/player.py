@@ -48,7 +48,7 @@ class Player(sprites.Sprite):
                         break
                 elif entity.tag == "money" and prect.colliderect(entity.rect):
                     self._coins += 1
-                    entities.remove(entity)
+                    entities[layer].remove(entity)
 
         # jump
         if keys[pygame.K_w] and _isgrounded and canJump:
@@ -73,7 +73,7 @@ class Player(sprites.Sprite):
         pass
 
     def getEval(self):
-        return f"Player('{self._imgpath}',{self.rect.x},{self.rect.y},'{self.tag}')"
+        return super().getEval('Player')
     
     def draw(self, surface):
         super().draw(surface)
