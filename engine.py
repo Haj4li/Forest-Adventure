@@ -86,7 +86,7 @@ class Game:
         self._editorModeEntities.append(Sprite("assets/Rock.png",0,0,"ground"))
 
         # load audios
-        play_audio('assets/Music/bgmusic.wav',True,1)
+        play_audio('assets/Music/bgmusic.wav',-1,1)
 
 
         self._editorModeEntities.append(Cloud("assets/cl.png",0,0))

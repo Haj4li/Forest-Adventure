@@ -1,6 +1,7 @@
 import pygame
 from modules import sprites
 
+
 class Player(sprites.Sprite):
     gravityValue = 5
     jumpForce = 10
@@ -56,6 +57,7 @@ class Player(sprites.Sprite):
                         break
                 elif entity.tag == "money" and prect.colliderect(entity.rect):
                     self._coins += 1
+                    pygame.mixer.Sound('assets/Music/pickupCoin.wav').play()
                     entities[layer].remove(entity)
 
         # jump
