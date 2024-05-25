@@ -5,6 +5,7 @@ from modules.sprites import *
 from modules.player import Player
 from modules.camera import Camera
 from modules.clouds import Cloud
+from modules.audio import *
 
 class Game:
     _isRunning = True
@@ -83,6 +84,9 @@ class Game:
         self._editorModeEntities.append(Sprite("assets/signleft.png",0,0,"object"))
         self._editorModeEntities.append(Sprite("assets/signright.png",0,0,"object"))
         self._editorModeEntities.append(Sprite("assets/Rock.png",0,0,"ground"))
+
+        # load audios
+        play_audio('assets/Music/bgmusic.wav',True,1)
 
 
         self._editorModeEntities.append(Cloud("assets/cl.png",0,0))
@@ -172,6 +176,8 @@ class Game:
 
                     self._mapSaved = True
                     so.close()
+
+
                 elif (event.key == pygame.K_1):
                     self._currentLayer = 0
                 elif (event.key == pygame.K_2):
