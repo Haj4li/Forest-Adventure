@@ -70,7 +70,7 @@ class Game:
     def _start(self):
         # add game scenes
         self._scenes.append('level.lfa')
-        self._scenes.append('level2.lfa')
+        self._scenes.append('level3.lfa')
 
         # add all entities to the editor entities if editing is enabled
 
@@ -191,7 +191,7 @@ class Game:
                 elif (event.key == pygame.K_7):
                     self._currentLayer = 6
                 elif (event.key == pygame.K_0):
-                    self._loadScene(0)
+                    self._loadScene(1)
                 elif (event.key == pygame.K_ESCAPE): # Escape the game
                     self._isRunning = False
                     return
