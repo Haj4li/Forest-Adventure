@@ -66,6 +66,7 @@ class Player(sprites.Sprite):
         
         # add jump force to velocity
         if (self._jumpingTo > 0 and canJump):
+            super().playAnimation('jump')
             self.move(0,-self.gravityValue)
             self._jumpingTo -= 1
         elif (not canJump): # cancel jumping if hit something
@@ -74,6 +75,7 @@ class Player(sprites.Sprite):
         
         # add gravity to velocity if not jumping
         elif (not _isgrounded and self._jumpingTo <= 0):
+            super().playAnimation('fall')
             self.move(0,velocity[1])
         
         # move player

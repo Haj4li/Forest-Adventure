@@ -80,9 +80,11 @@ class Game:
         self._editorModeEntities.append(Sprite("assets/tree.png",0,0,"tree"))
         self._editorModeEntities.append(Sprite("assets/tree2.png",0,0,"tree"))
         self._editorModeEntities.append(Sprite("assets/coin.png",0,0,"money"))
+        self._editorModeEntities.append(Sprite("assets/coin2.png",0,0,"money"))
         self._editorModeEntities.append(Sprite("assets/greeen.png",0,0,"object"))
         self._editorModeEntities.append(Sprite("assets/signleft.png",0,0,"object"))
         self._editorModeEntities.append(Sprite("assets/signright.png",0,0,"object"))
+        self._editorModeEntities.append(Sprite("assets/mushroom.png",0,0,"object"))
         self._editorModeEntities.append(Sprite("assets/Rock.png",0,0,"ground"))
 
         # load audios
@@ -93,20 +95,15 @@ class Game:
 
         self._selectedSprite = self._editorModeEntities[0].clone()
 
-        character = Player("assets/FrameSabet.png",200,200)
-        character.setupSpritesheet(1,8)
+        character = Player("assets/Main Characters/Pink Man/character.png",200,200)
+        character.setupSpritesheet(5,12)
 
-        character.addAnimation('idle',0,8,200,True)
-        character.addAnimation('run',0,8,200,True)
+        character.addAnimation('idle',0,11,25,True)
+        character.addAnimation('run',1,12,25,True)
+        character.addAnimation('fall',3,1,500,False)
+        character.addAnimation('jump',4,1,500,False)
 
         character.playAnimation('idle')
-        # character = Player("assets/knight.png",200,200)
-        # character.setupSpritesheet(2,15)
-
-        # character.addAnimation('idle',0,15,50,True)
-        # character.addAnimation('run',1,8,50,True)
-
-        # character.playAnimation('idle')
         
         self._editorModeEntities.append(character)
         
