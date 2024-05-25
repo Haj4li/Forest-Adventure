@@ -96,7 +96,7 @@ class Game:
 
         self._selectedSprite = self._editorModeEntities[0].clone()
 
-        character = Player("assets/Main Characters/Pink Man/character.png",200,200)
+        character = Player("assets/character.png",200,200)
         character.setupSpritesheet(5,12)
 
         character.addAnimation('idle',0,11,25,True)
