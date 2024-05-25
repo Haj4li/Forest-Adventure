@@ -9,6 +9,7 @@ from modules.audio import *
 
 class Game:
     _isRunning = True
+    _totalRendered = 0
     _loggingEnabled = True
     _editingLevelEnabled = True
     _entityIndex = 0
@@ -228,7 +229,7 @@ class Game:
         enc = 0
         for layer in self._entities.keys():
             enc += len(self._entities[layer])
-        text_render = self._font.render(f"Total Entities {enc} Loaded Images {len(images)} Mouse Pos {self._mousepos}", True, (0,0, 0))
+        text_render = self._font.render(f"Total Entities {enc}, Rendering {self._totalRendered} Loaded Images {len(images)} Mouse Pos {self._mousepos} ", True, (0,0, 0))
         text_rect = text_render.get_rect()
         text_rect.x = 50
         text_rect.y = 50
@@ -258,6 +259,8 @@ class Game:
 
         # draw _entities
         deleted = False
+        screenRect = pygame.Rect(0, 0, self.screen_width, self.screen_height)
+        self._totalRendered = 0
         for layer in self._entities.keys():
             for entity in self._entities[layer]:
                 if (self._removeFlag == True and entity.rect.collidepoint(self._mousepos)) : # check hovering entity and remove it from list
@@ -265,7 +268,10 @@ class Game:
                     deleted = True
                     self._entities[layer].remove(entity)
                 else:
-                    entity.draw(self._screen)
+                    if (entity.rect.colliderect(screenRect)):
+                        self._totalRendered += 1
+                        entity.draw(self._screen)
+        
         if (deleted == False):
             self._removeFlag = False
         
