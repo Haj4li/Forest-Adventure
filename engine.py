@@ -191,7 +191,7 @@ class Game:
                 elif (event.key == pygame.K_7):
                     self._currentLayer = 6
                 elif (event.key == pygame.K_0):
-                    self._loadScene(1)
+                    self._loadScene(0)
                 elif (event.key == pygame.K_ESCAPE): # Escape the game
                     self._isRunning = False
                     return
