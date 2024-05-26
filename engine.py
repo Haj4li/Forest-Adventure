@@ -78,8 +78,13 @@ class Game:
         self._editorModeEntities.append(Sprite("assets/s1.png",0,0,"ground"))
         self._editorModeEntities.append(Sprite("assets/wall.png",0,0,"ground"))
         
-        self._editorModeEntities.append(Sprite("assets/tree.png",0,0,"tree"))
         self._editorModeEntities.append(Sprite("assets/tree2.png",0,0,"tree"))
+        treeAnimated = Sprite("assets/treeAnim.png",0,0,"tree")
+        treeAnimated.setupSpritesheet(1,7)
+        treeAnimated.addAnimation('idle',0,7,200,True)
+        treeAnimated.playAnimation('idle')
+        self._editorModeEntities.append(treeAnimated)
+
         self._editorModeEntities.append(Sprite("assets/coin.png",0,0,"money"))
         self._editorModeEntities.append(Sprite("assets/coin2.png",0,0,"money"))
         self._editorModeEntities.append(Sprite("assets/cup.png",0,0,"win"))
