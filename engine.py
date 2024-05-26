@@ -22,6 +22,8 @@ class Game:
     _scenes = []
     _controlHeld = False
 
+    _currentScene = 0
+
     _currentLayer = 0
 
     # camera handler
@@ -51,7 +53,9 @@ class Game:
         return cloned
     
     def _loadScene(self,scene_index):
+
         if (scene_index <= len(self._scenes)-1):
+            self._currentScene = scene_index
             # clear entities
             self._entities.clear()
             self._entities = {0:[],1:[],2:[],3:[],4:[],5:[],6:[],7:[]}
@@ -93,6 +97,7 @@ class Game:
             
         self._editorModeEntities.append(Sprite("assets/coin.png",0,0,"money"))
         self._editorModeEntities.append(Sprite("assets/coin2.png",0,0,"money"))
+
         coinAnimated = Sprite("assets/coinAnim.png",0,0,"money")
         coinAnimated.setupSpritesheet(1,7)
         coinAnimated.addAnimation('idle',0,7,200,True)
@@ -163,6 +168,8 @@ class Game:
                         self._mainCamera.Follow(self._editorCam)
                     else:
                         self._mainCamera.UnFollow()
+                elif (event.key == pygame.K_r):
+                    self._loadScene(self._currentScene)
                 elif (event.key == pygame.K_LCTRL):
                     self._controlHeld = False
                 elif (self._editingLevelEnabled and event.key == pygame.K_e): # select next entity editor mode 
@@ -217,7 +224,6 @@ class Game:
         self._mousepos = pygame.Vector2(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1])
 
         # handle game conditions
-        winflag = False
         if (not self._editingLevelEnabled):
             # handle _entities update
             for layer in self._entities.keys():
