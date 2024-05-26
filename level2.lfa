@@ -1,45 +1,122 @@
-Player('assets/fox.png',384,160,'Player') # entity # 1
-Sprite('assets/s1.png',256,352,'ground') # entity # 2
-Sprite('assets/s1.png',288,352,'ground') # entity # 3
-Sprite('assets/s1.png',320,352,'ground') # entity # 4
-Sprite('assets/s1.png',352,352,'ground') # entity # 5
-Sprite('assets/s1.png',384,352,'ground') # entity # 6
-Sprite('assets/s1.png',416,352,'ground') # entity # 7
-Sprite('assets/s1.png',448,352,'ground') # entity # 8
-Sprite('assets/s1.png',480,352,'ground') # entity # 9
-Sprite('assets/s1.png',512,352,'ground') # entity # 10
-Sprite('assets/s1.png',544,352,'ground') # entity # 11
-Sprite('assets/s1.png',544,384,'ground') # entity # 12
-Sprite('assets/s1.png',256,384,'ground') # entity # 13
-Sprite('assets/s1.png',224,384,'ground') # entity # 14
-Sprite('assets/s1.png',192,384,'ground') # entity # 15
-Sprite('assets/s1.png',160,416,'ground') # entity # 16
-Sprite('assets/s1.png',192,416,'ground') # entity # 17
-Sprite('assets/s1.png',576,384,'ground') # entity # 18
-Sprite('assets/s1.png',576,416,'ground') # entity # 19
-Sprite('assets/s1.png',608,416,'ground') # entity # 20
-Sprite('assets/s1.png',640,416,'ground') # entity # 21
-Sprite('assets/s1.png',640,448,'ground') # entity # 22
-Sprite('assets/s1.png',160,448,'ground') # entity # 23
-Sprite('assets/s1.png',128,480,'ground') # entity # 24
-Sprite('assets/s1.png',128,448,'ground') # entity # 25
-Sprite('assets/s1.png',160,448,'ground') # entity # 26
-Sprite('assets/s1.png',192,448,'ground') # entity # 27
-Sprite('assets/s1.png',224,448,'ground') # entity # 28
-Sprite('assets/s1.png',256,448,'ground') # entity # 29
-Sprite('assets/s1.png',320,448,'ground') # entity # 30
-Sprite('assets/s1.png',416,448,'ground') # entity # 31
-Sprite('assets/s1.png',480,448,'ground') # entity # 32
-Sprite('assets/s1.png',512,448,'ground') # entity # 33
-Sprite('assets/s1.png',576,448,'ground') # entity # 34
-Sprite('assets/s1.png',608,448,'ground') # entity # 35
-Sprite('assets/s1.png',544,448,'ground') # entity # 36
-Sprite('assets/s1.png',448,448,'ground') # entity # 37
-Sprite('assets/s1.png',384,448,'ground') # entity # 38
-Sprite('assets/s1.png',352,448,'ground') # entity # 39
-Sprite('assets/s1.png',288,448,'ground') # entity # 40
-Sprite('assets/s1.png',640,480,'ground') # entity # 41
-Sprite('assets/s1.png',672,448,'ground') # entity # 42
-Sprite('assets/s1.png',672,480,'ground') # entity # 43
-Sprite('assets/s1.png',96,448,'ground') # entity # 44
-Sprite('assets/s1.png',96,480,'ground') # entity # 45
+Sprite('assets/greeen.png',354,388,'object');cloned.setupSpritesheet(1,1)
+Sprite('assets/tree.png',353,355,'tree');cloned.setupSpritesheet(1,1)
+Sprite('assets/tree.png',627,352,'tree');cloned.setupSpritesheet(1,1)
+Sprite('assets/greeen.png',654,388,'object');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',50,416,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',82,416,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',114,416,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',146,416,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',178,416,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',210,416,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',274,416,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',306,416,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',338,416,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',370,416,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',530,384,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',530,416,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',562,416,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',626,416,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',658,416,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',722,416,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',754,416,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',690,416,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',594,416,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',786,416,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',818,416,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',754,352,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',722,352,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',690,320,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',658,288,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',626,288,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',594,288,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',562,288,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',530,288,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',498,288,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',498,256,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',498,224,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',466,224,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',434,224,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',402,224,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',338,224,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',370,224,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',306,224,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',274,224,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',242,224,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',210,224,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',178,224,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',146,224,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',114,224,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',82,224,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',50,224,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',50,256,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',50,288,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',50,320,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',50,352,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',50,384,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',242,448,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',210,448,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',274,448,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',402,448,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',370,448,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',434,448,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',50,192,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',50,160,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',50,128,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',50,96,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',50,64,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',50,32,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',274,192,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',370,192,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',146,192,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/tree2.png',191,154,'tree');cloned.setupSpritesheet(1,1)
+Sprite('assets/tree2.png',435,155,'tree');cloned.setupSpritesheet(1,1)
+Sprite('assets/coin2.png',119,201,'money');cloned.setupSpritesheet(1,1)
+Sprite('assets/coin2.png',245,198,'money');cloned.setupSpritesheet(1,1)
+Sprite('assets/coin2.png',313,199,'money');cloned.setupSpritesheet(1,1)
+Sprite('assets/coin.png',273,158,'money');cloned.setupSpritesheet(1,1)
+Sprite('assets/coin.png',244,413,'money');cloned.setupSpritesheet(1,1)
+Sprite('assets/coin.png',497,384,'money');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',834,416,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',866,416,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',930,416,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',898,416,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',962,416,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',994,416,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',1026,416,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',1058,416,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',1090,416,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',1122,416,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',1154,416,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',1186,416,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',1218,416,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',930,384,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',962,352,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',962,384,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',1058,384,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',1090,352,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',1122,352,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',1090,384,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',1122,384,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',1192,288,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',1224,288,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',1256,288,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',1256,416,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',1224,416,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',1288,416,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',1288,384,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',1288,352,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',1288,320,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',1288,288,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',528,448,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',496,448,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',464,448,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',496,416,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/s1.png',528,416,'ground');cloned.setupSpritesheet(1,1)
+Sprite('assets/cup.png',1276,257,'win');cloned.setupSpritesheet(1,1)
+Sprite('assets/tree.png',833,352,'tree');cloned.setupSpritesheet(1,1)
+Sprite('assets/coin2.png',1116,331,'money');cloned.setupSpritesheet(1,1)
+Sprite('assets/coin.png',1208,377,'money');cloned.setupSpritesheet(1,1)
+Sprite('assets/greeen.png',1169,388,'object');cloned.setupSpritesheet(1,1)
+Sprite('assets/greeen.png',1258,388,'object');cloned.setupSpritesheet(1,1)
+Sprite('assets/greeen.png',964,324,'object');cloned.setupSpritesheet(1,1)
+Player('assets/character.png',133,377,'Player');cloned.setupSpritesheet(5,12);cloned.addAnimation('idle',0,11,25,True);cloned.addAnimation('run',1,12,25,True);cloned.addAnimation('fall',3,1,500,False);cloned.addAnimation('jump',4,1,500,False);cloned.setAnimation((0, 11, 25, True))
