@@ -106,7 +106,7 @@ class Game:
         self._editorModeEntities.append(Sprite("assets/Rock.png",0,0,"ground"))
 
         # load audios
-        play_audio('assets/Music/bgmusic.mp3',-1,0.5)
+        play_audio('assets/Music/bgmusic.mp3',-1,0.8)
 
 
         self._editorModeEntities.append(Cloud("assets/cl.png",0,0))
@@ -224,10 +224,10 @@ class Game:
                 for entity in self._entities[layer]:
                     if (entity.tag == "Player"):
                         entity.update(self._entities) # update player
+                        self._player_coins = entity.coins
                         if (entity.grabbedCup):
                             self._loadScene(1)
                             entity.grabbedCup = False
-                            self._player_coins = entity.coins
                             return
                         if (not self._mainCamera.IsFollowing()): # update main camera if not following anything
                             self._mainCamera.Follow(entity.rect)
