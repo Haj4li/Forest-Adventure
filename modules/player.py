@@ -4,6 +4,7 @@ from modules import sprites
 
 class Player(sprites.Sprite):
     gravityValue = 5
+    grabbedCup = False
     jumpForce = 15
     _jumpingTo = 0
     speed = 5
@@ -59,6 +60,8 @@ class Player(sprites.Sprite):
                     self._coins += 1
                     pygame.mixer.Sound('assets/Music/pickupCoin.wav').play()
                     entities[layer].remove(entity)
+                elif entity.tag == "win" and prect.colliderect(entity.rect):
+                    self.grabbedCup = True
 
         # jump
         if keys[pygame.K_w] and _isgrounded and canJump:

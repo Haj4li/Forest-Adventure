@@ -82,6 +82,7 @@ class Game:
         self._editorModeEntities.append(Sprite("assets/tree2.png",0,0,"tree"))
         self._editorModeEntities.append(Sprite("assets/coin.png",0,0,"money"))
         self._editorModeEntities.append(Sprite("assets/coin2.png",0,0,"money"))
+        self._editorModeEntities.append(Sprite("assets/cup.png",0,0,"win"))
         self._editorModeEntities.append(Sprite("assets/greeen.png",0,0,"object"))
         self._editorModeEntities.append(Sprite("assets/signleft.png",0,0,"object"))
         self._editorModeEntities.append(Sprite("assets/signright.png",0,0,"object"))
@@ -200,12 +201,17 @@ class Game:
         self._mousepos = pygame.Vector2(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1])
 
         # handle game conditions
+        winflag = False
         if (not self._editingLevelEnabled):
             # handle _entities update
             for layer in self._entities.keys():
                 for entity in self._entities[layer]:
                     if (entity.tag == "Player"):
                         entity.update(self._entities) # update player
+                        if (entity.grabbedCup):
+                            self._loadScene(1)
+                            entity.grabbedCup = False
+                            return
                         if (not self._mainCamera.IsFollowing()): # update main camera if not following anything
                             self._mainCamera.Follow(entity.rect)
                     else:
