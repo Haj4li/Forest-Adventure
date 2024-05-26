@@ -84,6 +84,13 @@ class Game:
         treeAnimated.playAnimation('idle')
         self._editorModeEntities.append(treeAnimated)
 
+        self.uiCoin = pygame.image.load("assets/coin2.png")
+        self.uiCoinImage = self.uiCoin.get_rect()
+        self.uiCoinImage.x = self.screen_width - 50
+        self.uiCoinImage.y = 50
+
+        self._player_coins = 0
+            
         self._editorModeEntities.append(Sprite("assets/coin.png",0,0,"money"))
         self._editorModeEntities.append(Sprite("assets/coin2.png",0,0,"money"))
         coinAnimated = Sprite("assets/coinAnim.png",0,0,"money")
@@ -99,7 +106,7 @@ class Game:
         self._editorModeEntities.append(Sprite("assets/Rock.png",0,0,"ground"))
 
         # load audios
-        #play_audio('assets/Music/bgmusic.wav',-1,1)
+        play_audio('assets/Music/bgmusic.mp3',-1,0.5)
 
 
         self._editorModeEntities.append(Cloud("assets/cl.png",0,0))
@@ -123,13 +130,13 @@ class Game:
         if (self._editingLevelEnabled):
             keys = pygame.key.get_pressed()
             if keys[pygame.K_a]:
-                self._editorCam.x -= 2
+                self._editorCam.x -= 5
             elif keys[pygame.K_d]:
-                 self._editorCam.x += 2
+                 self._editorCam.x += 5
             elif keys[pygame.K_w]:
-                 self._editorCam.y -= 2
+                 self._editorCam.y -= 5
             elif keys[pygame.K_s]:
-                 self._editorCam.y += 2
+                 self._editorCam.y += 5
             
 
     def _update(self):
@@ -220,6 +227,7 @@ class Game:
                         if (entity.grabbedCup):
                             self._loadScene(1)
                             entity.grabbedCup = False
+                            self._player_coins = entity.coins
                             return
                         if (not self._mainCamera.IsFollowing()): # update main camera if not following anything
                             self._mainCamera.Follow(entity.rect)
@@ -297,6 +305,15 @@ class Game:
 
         if (self._selectedSprite != None and self._editingLevelEnabled):
             self._selectedSprite.draw(self._screen)
+
+        self._screen.blit(self.uiCoin,self.uiCoinImage)
+        text_render = self._font.render(f"{self._player_coins}", True, (0,0, 0))
+        text_rect = text_render.get_rect()
+        text_rect.x = self.screen_width - 65
+        text_rect.y = 55
+        self._screen.blit(text_render, text_rect)
+
+
         # draw logs
         if (self._loggingEnabled):
             self._drawLog()

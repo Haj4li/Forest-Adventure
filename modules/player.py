@@ -8,7 +8,7 @@ class Player(sprites.Sprite):
     jumpForce = 20
     _jumpingTo = 0
     speed = 5
-    _coins = 0
+    coins = 0
 
     def __init__(self, image_path,x,y,tag="Player"):
         super().__init__(image_path,x,y,tag)
@@ -57,7 +57,7 @@ class Player(sprites.Sprite):
                     if (not canMove and _isgrounded and not canJump ):
                         break
                 elif entity.tag == "money" and prect.colliderect(entity.rect):
-                    self._coins += 1
+                    self.coins += 1
                     pygame.mixer.Sound('assets/Music/pickupCoin.wav').play()
                     entities[layer].remove(entity)
                 elif entity.tag == "win" and prect.colliderect(entity.rect):
