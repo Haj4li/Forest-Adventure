@@ -67,9 +67,7 @@ class Player(sprites.Sprite):
                     self.grabbedCup = True
 
         # jump
-        if keys[pygame.K_w] and ((_isgrounded and canJump) or not self._doubleJumped):
-            if (not _isgrounded and not self._doubleJumped):
-                self._doubleJumped = True
+        if keys[pygame.K_w] and (_isgrounded and canJump):
             self._jumpingTo = self.jumpForce
 
         
