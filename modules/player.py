@@ -5,10 +5,12 @@ from modules import sprites
 class Player(sprites.Sprite):
     gravityValue = 5
     grabbedCup = False
-    jumpForce = 15
+    jumpForce = 20
     _jumpingTo = 0
+    _jumped = False
+    _doubleJumped = False
     speed = 5
-    _coins = 0
+    coins = 0
 
     def __init__(self, image_path,x,y,tag="Player"):
         super().__init__(image_path,x,y,tag)
@@ -47,6 +49,7 @@ class Player(sprites.Sprite):
                     # check down 
                     if (not _isgrounded and pygame.Rect((self.rect.x),(self.rect.y)+ velocity[1],self.rect.width,self.rect.height).colliderect(entity.rect)):
                         _isgrounded = True
+                        self._doubleJumped = False
                     # check up (so player can jump if it's clear)
                     if (canJump and pygame.Rect((self.rect.x),(self.rect.y) - self.gravityValue,self.rect.width,self.rect.height).colliderect(entity.rect)):
                         canJump = False
@@ -57,18 +60,22 @@ class Player(sprites.Sprite):
                     if (not canMove and _isgrounded and not canJump ):
                         break
                 elif entity.tag == "money" and prect.colliderect(entity.rect):
-                    self._coins += 1
+                    self.coins += 1
                     pygame.mixer.Sound('assets/Music/pickupCoin.wav').play()
                     entities[layer].remove(entity)
                 elif entity.tag == "win" and prect.colliderect(entity.rect):
                     self.grabbedCup = True
 
         # jump
-        if keys[pygame.K_w] and _isgrounded and canJump:
+        if keys[pygame.K_w] and ((_isgrounded and canJump) or not self._doubleJumped):
+            if (not _isgrounded and not self._doubleJumped):
+                self._doubleJumped = True
             self._jumpingTo = self.jumpForce
+
         
         # add jump force to velocity
         if (self._jumpingTo > 0 and canJump):
+            
             super().playAnimation('jump')
             self.move(0,-self.gravityValue)
             self._jumpingTo -= 1

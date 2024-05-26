@@ -22,6 +22,8 @@ class Game:
     _scenes = []
     _controlHeld = False
 
+    _currentScene = 0
+
     _currentLayer = 0
 
     # camera handler
@@ -51,7 +53,9 @@ class Game:
         return cloned
     
     def _loadScene(self,scene_index):
+
         if (scene_index <= len(self._scenes)-1):
+            self._currentScene = scene_index
             # clear entities
             self._entities.clear()
             self._entities = {0:[],1:[],2:[],3:[],4:[],5:[],6:[],7:[]}
@@ -73,15 +77,32 @@ class Game:
         self._scenes.append('level1.lfa')
 
         # add all entities to the editor entities if editing is enabled
-
         # self._editorModeEntities.append(Player("assets/fox.png",0,0))
         self._editorModeEntities.append(Sprite("assets/s1.png",0,0,"ground"))
         self._editorModeEntities.append(Sprite("assets/wall.png",0,0,"ground"))
         
-        self._editorModeEntities.append(Sprite("assets/tree.png",0,0,"tree"))
         self._editorModeEntities.append(Sprite("assets/tree2.png",0,0,"tree"))
+        treeAnimated = Sprite("assets/treeAnim.png",0,0,"tree")
+        treeAnimated.setupSpritesheet(1,7)
+        treeAnimated.addAnimation('idle',0,7,200,True)
+        treeAnimated.playAnimation('idle')
+        self._editorModeEntities.append(treeAnimated)
+
+        self.uiCoin = pygame.image.load("assets/coin2.png")
+        self.uiCoinImage = self.uiCoin.get_rect()
+        self.uiCoinImage.x = self.screen_width - 50
+        self.uiCoinImage.y = 50
+
+        self._player_coins = 0
+            
         self._editorModeEntities.append(Sprite("assets/coin.png",0,0,"money"))
         self._editorModeEntities.append(Sprite("assets/coin2.png",0,0,"money"))
+
+        coinAnimated = Sprite("assets/coinAnim.png",0,0,"money")
+        coinAnimated.setupSpritesheet(1,7)
+        coinAnimated.addAnimation('idle',0,7,200,True)
+        coinAnimated.playAnimation('idle')
+        self._editorModeEntities.append(coinAnimated)
         self._editorModeEntities.append(Sprite("assets/cup.png",0,0,"win"))
         self._editorModeEntities.append(Sprite("assets/greeen.png",0,0,"object"))
         self._editorModeEntities.append(Sprite("assets/signleft.png",0,0,"object"))
@@ -90,7 +111,7 @@ class Game:
         self._editorModeEntities.append(Sprite("assets/Rock.png",0,0,"ground"))
 
         # load audios
-        #play_audio('assets/Music/bgmusic.wav',-1,1)
+        play_audio('assets/Music/bgmusic.mp3',-1,0.8)
 
 
         self._editorModeEntities.append(Cloud("assets/cl.png",0,0))
@@ -114,13 +135,13 @@ class Game:
         if (self._editingLevelEnabled):
             keys = pygame.key.get_pressed()
             if keys[pygame.K_a]:
-                self._editorCam.x -= 2
+                self._editorCam.x -= 5
             elif keys[pygame.K_d]:
-                 self._editorCam.x += 2
+                 self._editorCam.x += 5
             elif keys[pygame.K_w]:
-                 self._editorCam.y -= 2
+                 self._editorCam.y -= 5
             elif keys[pygame.K_s]:
-                 self._editorCam.y += 2
+                 self._editorCam.y += 5
             
 
     def _update(self):
@@ -147,6 +168,8 @@ class Game:
                         self._mainCamera.Follow(self._editorCam)
                     else:
                         self._mainCamera.UnFollow()
+                elif (event.key == pygame.K_r):
+                    self._loadScene(self._currentScene)
                 elif (event.key == pygame.K_LCTRL):
                     self._controlHeld = False
                 elif (self._editingLevelEnabled and event.key == pygame.K_e): # select next entity editor mode 
@@ -201,13 +224,13 @@ class Game:
         self._mousepos = pygame.Vector2(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1])
 
         # handle game conditions
-        winflag = False
         if (not self._editingLevelEnabled):
             # handle _entities update
             for layer in self._entities.keys():
                 for entity in self._entities[layer]:
                     if (entity.tag == "Player"):
                         entity.update(self._entities) # update player
+                        self._player_coins = entity.coins
                         if (entity.grabbedCup):
                             self._loadScene(1)
                             entity.grabbedCup = False
@@ -260,8 +283,7 @@ class Game:
 
     def _draw(self):
         # fill screen with white color
-        self._screen.fill((255,255,255))
-
+        self._screen.fill((109, 197, 209))
 
         # draw _entities
         deleted = False
@@ -289,6 +311,15 @@ class Game:
 
         if (self._selectedSprite != None and self._editingLevelEnabled):
             self._selectedSprite.draw(self._screen)
+
+        self._screen.blit(self.uiCoin,self.uiCoinImage)
+        text_render = self._font.render(f"{self._player_coins}", True, (0,0, 0))
+        text_rect = text_render.get_rect()
+        text_rect.x = self.screen_width - 65
+        text_rect.y = 55
+        self._screen.blit(text_render, text_rect)
+
+
         # draw logs
         if (self._loggingEnabled):
             self._drawLog()
