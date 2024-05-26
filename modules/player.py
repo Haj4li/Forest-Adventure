@@ -5,7 +5,7 @@ from modules import sprites
 class Player(sprites.Sprite):
     gravityValue = 5
     grabbedCup = False
-    jumpForce = 15
+    jumpForce = 20
     _jumpingTo = 0
     speed = 5
     _coins = 0

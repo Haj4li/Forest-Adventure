@@ -73,15 +73,24 @@ class Game:
         self._scenes.append('level1.lfa')
 
         # add all entities to the editor entities if editing is enabled
-
         # self._editorModeEntities.append(Player("assets/fox.png",0,0))
         self._editorModeEntities.append(Sprite("assets/s1.png",0,0,"ground"))
         self._editorModeEntities.append(Sprite("assets/wall.png",0,0,"ground"))
         
-        self._editorModeEntities.append(Sprite("assets/tree.png",0,0,"tree"))
         self._editorModeEntities.append(Sprite("assets/tree2.png",0,0,"tree"))
+        treeAnimated = Sprite("assets/treeAnim.png",0,0,"tree")
+        treeAnimated.setupSpritesheet(1,7)
+        treeAnimated.addAnimation('idle',0,7,200,True)
+        treeAnimated.playAnimation('idle')
+        self._editorModeEntities.append(treeAnimated)
+
         self._editorModeEntities.append(Sprite("assets/coin.png",0,0,"money"))
         self._editorModeEntities.append(Sprite("assets/coin2.png",0,0,"money"))
+        coinAnimated = Sprite("assets/coinAnim.png",0,0,"money")
+        coinAnimated.setupSpritesheet(1,7)
+        coinAnimated.addAnimation('idle',0,7,200,True)
+        coinAnimated.playAnimation('idle')
+        self._editorModeEntities.append(coinAnimated)
         self._editorModeEntities.append(Sprite("assets/cup.png",0,0,"win"))
         self._editorModeEntities.append(Sprite("assets/greeen.png",0,0,"object"))
         self._editorModeEntities.append(Sprite("assets/signleft.png",0,0,"object"))
@@ -260,8 +269,7 @@ class Game:
 
     def _draw(self):
         # fill screen with white color
-        self._screen.fill((255,255,255))
-
+        self._screen.fill((109, 197, 209))
 
         # draw _entities
         deleted = False
