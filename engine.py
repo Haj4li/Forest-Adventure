@@ -70,7 +70,7 @@ class Game:
     def _start(self):
         # add game scenes
         self._scenes.append('level.lfa')
-        self._scenes.append('level3.lfa')
+        self._scenes.append('level1.lfa')
 
         # add all entities to the editor entities if editing is enabled
 
