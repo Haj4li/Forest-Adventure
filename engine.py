@@ -104,6 +104,7 @@ class Game:
         coinAnimated.playAnimation('idle')
         self._editorModeEntities.append(coinAnimated)
         self._editorModeEntities.append(Sprite("assets/cup.png",0,0,"win"))
+        self._editorModeEntities.append(Sprite("assets/bat.png",0,0,"enemy"))
         self._editorModeEntities.append(Sprite("assets/greeen.png",0,0,"object"))
         self._editorModeEntities.append(Sprite("assets/signleft.png",0,0,"object"))
         self._editorModeEntities.append(Sprite("assets/signright.png",0,0,"object"))
