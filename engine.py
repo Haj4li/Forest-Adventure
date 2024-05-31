@@ -1,6 +1,7 @@
 import pygame
 import os
 
+from modules.bats import Bat
 from modules.sprites import *
 from modules.player import Player
 from modules.camera import Camera
@@ -21,6 +22,8 @@ class Game:
     _editorCam = None
     _scenes = []
     _controlHeld = False
+    _isInMenu = False
+
 
     _currentScene = 0
 
@@ -104,7 +107,6 @@ class Game:
         coinAnimated.playAnimation('idle')
         self._editorModeEntities.append(coinAnimated)
         self._editorModeEntities.append(Sprite("assets/cup.png",0,0,"win"))
-        self._editorModeEntities.append(Sprite("assets/bat.png",0,0,"enemy"))
         self._editorModeEntities.append(Sprite("assets/greeen.png",0,0,"object"))
         self._editorModeEntities.append(Sprite("assets/signleft.png",0,0,"object"))
         self._editorModeEntities.append(Sprite("assets/signright.png",0,0,"object"))
@@ -115,9 +117,16 @@ class Game:
         play_audio('assets/Music/bgmusic.mp3',-1,0.8)
 
 
+        # menu
+        self._menubg = Sprite("assets/menu.png",0,0,'bg')
+
+
         self._editorModeEntities.append(Cloud("assets/cl.png",0,0))
 
         self._selectedSprite = self._editorModeEntities[0].clone()
+
+        bat = Bat("assets/bat.png",0,0,"Bat")
+        self._editorModeEntities.append(bat)
 
         character = Player("assets/character.png",200,200)
         character.setupSpritesheet(5,12)
@@ -148,112 +157,121 @@ class Game:
     def _update(self):
         # handle events
         
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self._isRunning = False
-                return
-            elif event.type == pygame.MOUSEBUTTONUP:
-                if self._editingLevelEnabled and event.button == 1: # add new entity to the game
-                    self._mapSaved = False
-                    self._entities[self._currentLayer].append(self._selectedSprite.clone())
-                elif self._editingLevelEnabled and event.button == 3: # remove hovering entity from the game
-                    self._removeFlag = True
-            elif event.type == pygame.KEYDOWN:
-                if (event.key == pygame.K_LCTRL):
-                    self._controlHeld = True
-            # handle user input
-            elif event.type == pygame.KEYUP:
-                if (event.key == pygame.K_TAB): # change game mode (Game/Editor)
-                    self._editingLevelEnabled = not self._editingLevelEnabled
-                    if (self._editingLevelEnabled):
-                        self._mainCamera.Follow(self._editorCam)
-                    else:
-                        self._mainCamera.UnFollow()
-                elif (event.key == pygame.K_r):
-                    self._loadScene(self._currentScene)
-                elif (event.key == pygame.K_LCTRL):
-                    self._controlHeld = False
-                elif (self._editingLevelEnabled and event.key == pygame.K_e): # select next entity editor mode 
-                    self._entityIndex += 1
-                    if (self._entityIndex >= len(self._editorModeEntities)):
-                        self._entityIndex = 0
-                    del self._selectedSprite
-                    self._selectedSprite = self._editorModeEntities[self._entityIndex].clone()
-                elif (self._editingLevelEnabled and event.key == pygame.K_q): # select previus entity editor mode 
-                    self._entityIndex -= 1
-                    if (self._entityIndex < 0):
-                        self._entityIndex = len(self._editorModeEntities)-1
-                    del self._selectedSprite
-                    self._selectedSprite = self._editorModeEntities[self._entityIndex].clone()
-                elif (event.key == pygame.K_DELETE and self._editingLevelEnabled): # clear the map 
-                    self._entities.clear()
-                    self._entities = {0:[],1:[],2:[],3:[],4:[],5:[],6:[],7:[]}
-                elif (event.key == pygame.K_z): # Save the game
-                    so = open("level.lfa",'w')
-                    id = 0
-                    for layer in self._entities.keys():
-                        for entity in self._entities[layer]:
-                            id +=1
-                            so.write(f"{entity.getEval()}\n")
-                    # todo: camera eval
-
-                    self._mapSaved = True
-                    so.close()
-
-
-                elif (event.key == pygame.K_1):
-                    self._currentLayer = 0
-                elif (event.key == pygame.K_2):
-                    self._currentLayer = 1
-                elif (event.key == pygame.K_3):
-                    self._currentLayer = 2
-                elif (event.key == pygame.K_4):
-                    self._currentLayer = 3
-                elif (event.key == pygame.K_5):
-                    self._currentLayer = 4
-                elif (event.key == pygame.K_6):
-                    self._currentLayer = 5
-                elif (event.key == pygame.K_7):
-                    self._currentLayer = 6
-                elif (event.key == pygame.K_0):
-                    self._loadScene(0)
-                elif (event.key == pygame.K_ESCAPE): # Escape the game
+        if (self._isInMenu):
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
                     self._isRunning = False
                     return
-    
+        else:
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self._isRunning = False
+                    return
+                elif event.type == pygame.MOUSEBUTTONUP:
+                    if self._editingLevelEnabled and event.button == 1: # add new entity to the game
+                        self._mapSaved = False
+                        self._entities[self._currentLayer].append(self._selectedSprite.clone())
+                    elif self._editingLevelEnabled and event.button == 3: # remove hovering entity from the game
+                        self._removeFlag = True
+                elif event.type == pygame.KEYDOWN:
+                    if (event.key == pygame.K_LCTRL):
+                        self._controlHeld = True
+                # handle user input
+                elif event.type == pygame.KEYUP:
+                    if (event.key == pygame.K_TAB): # change game mode (Game/Editor)
+                        self._editingLevelEnabled = not self._editingLevelEnabled
+                        if (self._editingLevelEnabled):
+                            self._mainCamera.Follow(self._editorCam)
+                        else:
+                            self._mainCamera.UnFollow()
+                    elif (event.key == pygame.K_r):
+                        self._loadScene(self._currentScene)
+                    elif (event.key == pygame.K_LCTRL):
+                        self._controlHeld = False
+                    elif (self._editingLevelEnabled and event.key == pygame.K_e): # select next entity editor mode 
+                        self._entityIndex += 1
+                        if (self._entityIndex >= len(self._editorModeEntities)):
+                            self._entityIndex = 0
+                        del self._selectedSprite
+                        self._selectedSprite = self._editorModeEntities[self._entityIndex].clone()
+                    elif (self._editingLevelEnabled and event.key == pygame.K_q): # select previus entity editor mode 
+                        self._entityIndex -= 1
+                        if (self._entityIndex < 0):
+                            self._entityIndex = len(self._editorModeEntities)-1
+                        del self._selectedSprite
+                        self._selectedSprite = self._editorModeEntities[self._entityIndex].clone()
+                    elif (event.key == pygame.K_DELETE and self._editingLevelEnabled): # clear the map 
+                        self._entities.clear()
+                        self._entities = {0:[],1:[],2:[],3:[],4:[],5:[],6:[],7:[]}
+                    elif (event.key == pygame.K_z): # Save the game
+                        so = open("level.lfa",'w')
+                        id = 0
+                        for layer in self._entities.keys():
+                            for entity in self._entities[layer]:
+                                id +=1
+                                so.write(f"{entity.getEval()}\n")
+                        # todo: camera eval
+
+                        self._mapSaved = True
+                        so.close()
+
+
+                    elif (event.key == pygame.K_1):
+                        self._currentLayer = 0
+                    elif (event.key == pygame.K_2):
+                        self._currentLayer = 1
+                    elif (event.key == pygame.K_3):
+                        self._currentLayer = 2
+                    elif (event.key == pygame.K_4):
+                        self._currentLayer = 3
+                    elif (event.key == pygame.K_5):
+                        self._currentLayer = 4
+                    elif (event.key == pygame.K_6):
+                        self._currentLayer = 5
+                    elif (event.key == pygame.K_7):
+                        self._currentLayer = 6
+                    elif (event.key == pygame.K_0):
+                        self._loadScene(0)
+                    elif (event.key == pygame.K_ESCAPE): # Escape the game
+                        self._isRunning = False
+                        return
         
-        self._mousepos = pygame.Vector2(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1])
+            
+            self._mousepos = pygame.Vector2(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1])
 
-        # handle game conditions
-        if (not self._editingLevelEnabled):
-            # handle _entities update
-            for layer in self._entities.keys():
-                for entity in self._entities[layer]:
-                    if (entity.tag == "Player"):
-                        entity.update(self._entities) # update player
-                        self._player_coins = entity.coins
-                        if (entity.grabbedCup):
-                            self._loadScene(1)
-                            entity.grabbedCup = False
-                            return
-                        if (not self._mainCamera.IsFollowing()): # update main camera if not following anything
-                            self._mainCamera.Follow(entity.rect)
-                    else:
-                        entity.update()
-        elif (self._editingLevelEnabled and self._selectedSprite != None):
-            if (not self._mainCamera.IsFollowing()):
-                self._mainCamera.Follow(self._editorCam)
-            self._updateCameraRect()
-            # limit the position of mouse and selected sprite
-            # due to the sprite rect
-            if (self._controlHeld):
-                fixedPos = pygame.Vector2(int(self._mousepos.x / self._selectedSprite.rect.width)*self._selectedSprite.rect.width,int(self._mousepos.y / self._selectedSprite.rect.height)*self._selectedSprite.rect.height)
-            else:
-                fixedPos = self._mousepos
-            self._selectedSprite.setPosition(fixedPos)
+            # handle game conditions
+            if (not self._editingLevelEnabled):
+                # handle _entities update
+                for layer in self._entities.keys():
+                    for entity in self._entities[layer]:
+                        if (entity.tag == "Player"):
+                            entity.update(self._entities) # update player
+                            self._player_coins = entity.coins
+                            if (entity.grabbedCup):
+                                self._loadScene(1)
+                                entity.grabbedCup = False
+                                return
+                            if (not self._mainCamera.IsFollowing()): # update main camera if not following anything
+                                self._mainCamera.Follow(entity.rect)
+                        elif (entity.tag == "Bat"):
+                            entity.update(self._entities) # update Bats
+                        else:
+                            entity.update()
+            elif (self._editingLevelEnabled and self._selectedSprite != None):
+                if (not self._mainCamera.IsFollowing()):
+                    self._mainCamera.Follow(self._editorCam)
+                self._updateCameraRect()
+                # limit the position of mouse and selected sprite
+                # due to the sprite rect
+                if (self._controlHeld):
+                    fixedPos = pygame.Vector2(int(self._mousepos.x / self._selectedSprite.rect.width)*self._selectedSprite.rect.width,int(self._mousepos.y / self._selectedSprite.rect.height)*self._selectedSprite.rect.height)
+                else:
+                    fixedPos = self._mousepos
+                self._selectedSprite.setPosition(fixedPos)
 
-        # Update the main Camera
-        self._mainCamera.Update(self._entities)
+            # Update the main Camera
+            self._mainCamera.Update(self._entities)
 
     def _drawLog(self):
         enc = 0
@@ -285,46 +303,47 @@ class Game:
     def _draw(self):
         # fill screen with white color
         self._screen.fill((109, 197, 209))
-
-        # draw _entities
-        deleted = False
-        screenRect = pygame.Rect(0, 0, self.screen_width, self.screen_height)
-        self._totalRendered = 0
-        for layer in self._entities.keys():
-            for entity in self._entities[layer]:
-                if (self._removeFlag == True and entity.rect.collidepoint(self._mousepos)) : # check hovering entity and remove it from list
-                    self._removeFlag = False
-                    deleted = True
-                    self._entities[layer].remove(entity)
-                else:
-                    if (entity.rect.colliderect(screenRect)):
-                        self._totalRendered += 1
-                        entity.draw(self._screen)
-        
-        if (deleted == False):
-            self._removeFlag = False
-        
-        if (self._editingLevelEnabled):
-            offset_y=self.screen_height-64
-            for i in range(0,len(self._editorModeEntities)):
-                self._editorModeEntities[i].drawAt((i*32) + (5*i),offset_y,self._screen)
-
-
-        if (self._selectedSprite != None and self._editingLevelEnabled):
-            self._selectedSprite.draw(self._screen)
-
-        self._screen.blit(self.uiCoin,self.uiCoinImage)
-        text_render = self._font.render(f"{self._player_coins}", True, (0,0, 0))
-        text_rect = text_render.get_rect()
-        text_rect.x = self.screen_width - 65
-        text_rect.y = 55
-        self._screen.blit(text_render, text_rect)
+        if (not self._isInMenu):
+            # draw _entities
+            deleted = False
+            screenRect = pygame.Rect(0, 0, self.screen_width, self.screen_height)
+            self._totalRendered = 0
+            for layer in self._entities.keys():
+                for entity in self._entities[layer]:
+                    if (self._removeFlag == True and entity.rect.collidepoint(self._mousepos)) : # check hovering entity and remove it from list
+                        self._removeFlag = False
+                        deleted = True
+                        self._entities[layer].remove(entity)
+                    else:
+                        if (entity.rect.colliderect(screenRect)):
+                            self._totalRendered += 1
+                            entity.draw(self._screen)
+            
+            if (deleted == False):
+                self._removeFlag = False
+            
+            if (self._editingLevelEnabled):
+                offset_y=self.screen_height-64
+                for i in range(0,len(self._editorModeEntities)):
+                    self._editorModeEntities[i].drawAt((i*32) + (5*i),offset_y,self._screen)
 
 
-        # draw logs
-        if (self._loggingEnabled):
-            self._drawLog()
+            if (self._selectedSprite != None and self._editingLevelEnabled):
+                self._selectedSprite.draw(self._screen)
 
+            self._screen.blit(self.uiCoin,self.uiCoinImage)
+            text_render = self._font.render(f"{self._player_coins}", True, (0,0, 0))
+            text_rect = text_render.get_rect()
+            text_rect.x = self.screen_width - 75
+            text_rect.y = 55
+            self._screen.blit(text_render, text_rect)
+
+
+            # draw logs
+            if (self._loggingEnabled and self._editingLevelEnabled):
+                self._drawLog()
+        else:
+            self._menubg.draw(self._screen)
         # Update the display
         pygame.display.flip()
 

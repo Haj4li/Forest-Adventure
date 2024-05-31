@@ -14,8 +14,7 @@ class Player(sprites.Sprite):
 
     def __init__(self, image_path,x,y,tag="Player"):
         super().__init__(image_path,x,y,tag)
-
-
+    
     def update(self, entities):
        
         velocity = [0,0]
@@ -42,8 +41,11 @@ class Player(sprites.Sprite):
         canMove = True
         _isgrounded = False
         canJump = True
+        breaked = False
         prect = pygame.Rect((self.rect.x) + velocity[0],(self.rect.y) + velocity[1],self.rect.width,self.rect.height)
         for layer in entities.keys():
+            if (breaked):
+                break
             for entity in entities[layer]:
                 if entity.tag == "ground" and prect.colliderect(entity.rect):
                     # check down 
@@ -58,8 +60,14 @@ class Player(sprites.Sprite):
                         canMove = False
                     
                     if (not canMove and _isgrounded and not canJump ):
+                        breaked = True
                         break
                 elif entity.tag == "money" and prect.colliderect(entity.rect):
+                    self.coins += 1
+                    pygame.mixer.Sound('assets/Music/pickupCoin.wav').play()
+                    entities[layer].remove(entity)
+                elif entity.tag == "Bat" and prect.colliderect(entity.rect):
+                    print("Hit the bat")
                     self.coins += 1
                     pygame.mixer.Sound('assets/Music/pickupCoin.wav').play()
                     entities[layer].remove(entity)

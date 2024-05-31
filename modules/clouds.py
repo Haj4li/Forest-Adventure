@@ -8,7 +8,7 @@ class Cloud(sprites.Sprite):
         self._startpos = start_pos
 
     def _reset(self):
-        self.rect.x = self._startpos + self.rect.width
+        self.rect.x = self._startpos + self.rect.width + 100
         self.rect.y = random.randint(0,50)
 
     def update(self):
