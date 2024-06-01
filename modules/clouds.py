@@ -6,6 +6,7 @@ class Cloud(sprites.Sprite):
     def __init__(self,image_path, start_pos,y,tag="cloud"):
         super().__init__(image_path,start_pos,y,tag)
         self._startpos = start_pos
+        
 
     def _reset(self):
         self.rect.x = self._startpos + self.rect.width + 100
