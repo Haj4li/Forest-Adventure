@@ -22,7 +22,7 @@ class Game:
     _editorCam = None
     _scenes = []
     _controlHeld = False
-    _isInMenu = False
+    _isInMenu = True
 
 
     _currentScene = 0
@@ -119,11 +119,11 @@ class Game:
 
         # menu
         self._menubg = Sprite("assets/menu.png",0,0,'bg')
-        self._mPlayButton = Sprite("assets/play.png",400,250,'button')
+        self._mPlayButton = Sprite("assets/play.png",350,150,'button')
         self._mPlayButton.setupSpritesheet(2,1)
         self._mPlayButton.addAnimation('normal',0,1,1,False)
         self._mPlayButton.addAnimation('hover',1,1,1,False)
-
+        self._mPlayButton.playAnimation('normal')
 
 
         self._editorModeEntities.append(Cloud("assets/cl.png",0,0))
@@ -161,7 +161,7 @@ class Game:
 
     def _update(self):
         # handle events
-        
+        self._mousepos = pygame.Vector2(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1])
         if (self._isInMenu):
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -243,7 +243,7 @@ class Game:
                         return
         
             
-            self._mousepos = pygame.Vector2(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1])
+            
 
             # handle game conditions
             if (not self._editingLevelEnabled):
@@ -349,6 +349,10 @@ class Game:
                 self._drawLog()
         else:
             self._menubg.draw(self._screen)
+            if (self._mPlayButton.rect.collidepoint(self._mousepos)):
+                self._mPlayButton.playAnimation('hover')
+            else:
+                self._mPlayButton.playAnimation('normal')
             self._mPlayButton.draw(self._screen)
         # Update the display
         pygame.display.flip()
