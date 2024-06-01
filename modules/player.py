@@ -11,11 +11,15 @@ class Player(sprites.Sprite):
     _doubleJumped = False
     speed = 5
     coins = 0
+    health = 3
+    isDead = False
 
     def __init__(self, image_path,x,y,tag="Player"):
         super().__init__(image_path,x,y,tag)
     
     def update(self, entities):
+        if (self.isDead):
+            return
        
         velocity = [0,0]
 
@@ -68,8 +72,10 @@ class Player(sprites.Sprite):
                     pygame.mixer.Sound('assets/Music/pickupCoin.wav').play()
                     entities[layer].remove(entity)
                 elif entity.tag == "Bat" and prect.colliderect(entity.rect):
-                    print("Hit the bat")
-                    self.coins += 1
+                    self.health -= 1
+                    if (self.health <= 0):
+                        print("Is dead")
+                        self.isDead = True
                     pygame.mixer.Sound('assets/Music/pickupCoin.wav').play()
                     entities[layer].remove(entity)
                 elif entity.tag == "win" and prect.colliderect(entity.rect):

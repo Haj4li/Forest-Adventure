@@ -126,6 +126,22 @@ class Game:
         self._mPlayButton.addAnimation('hover',1,1,1,False)
         self._mPlayButton.playAnimation('normal')
 
+        self._pavatar = Sprite("assets/avatar.png",50,50,"ui")
+        self._pavatar.setupSpritesheet(4,1)
+        self._pavatar.addAnimation('healthy',0,1,1,False)
+        self._pavatar.addAnimation('damaged',1,1,1,False)
+        self._pavatar.addAnimation('badlydamaged',2,1,1,False)
+        self._pavatar.addAnimation('badman',3,1,1,False)
+        self._pavatar.playAnimation('healthy')
+
+        self._healthBar = Sprite("assets/Heart.png",100,65,"ui")
+        self._healthBar.setupSpritesheet(4,1)
+        self._healthBar.addAnimation('healthy',0,1,1,False)
+        self._healthBar.addAnimation('damaged',1,1,1,False)
+        self._healthBar.addAnimation('badlydamaged',2,1,1,False)
+        self._healthBar.addAnimation('badman',3,1,1,False)
+        self._healthBar.playAnimation('healthy')
+
 
         self._editorModeEntities.append(Cloud("assets/cl.png",0,0))
 
@@ -135,6 +151,7 @@ class Game:
         self._editorModeEntities.append(bat)
 
         character = Player("assets/character.png",200,200)
+
         character.setupSpritesheet(5,12)
 
         character.addAnimation('idle',0,11,25,True)
@@ -164,7 +181,8 @@ class Game:
         # handle events
         self._mousepos = pygame.Vector2(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1])
         self._MouseClicked = False
-        for event in pygame.event.get():
+        events = pygame.event.get()
+        for event in events:
             if event.type == pygame.QUIT:
                 self._isRunning = False
                 return
@@ -174,7 +192,7 @@ class Game:
         if (self._isInMenu):
             pass
         else:
-            for event in pygame.event.get():
+            for event in events:
                 if event.type == pygame.QUIT:
                     self._isRunning = False
                     return
@@ -189,8 +207,10 @@ class Game:
                         self._controlHeld = True
                 # handle user input
                 elif event.type == pygame.KEYUP:
+                    print(self._editingLevelEnabled)
                     if (event.key == pygame.K_TAB): # change game mode (Game/Editor)
                         self._editingLevelEnabled = not self._editingLevelEnabled
+                        print(self._editingLevelEnabled)
                         if (self._editingLevelEnabled):
                             self._mainCamera.Follow(self._editorCam)
                         else:
@@ -258,6 +278,20 @@ class Game:
                         if (entity.tag == "Player"):
                             entity.update(self._entities) # update player
                             self._player_coins = entity.coins
+
+                            if (entity.health == 3):
+                                self._pavatar.playAnimation('healthy')
+                                self._healthBar.playAnimation('healthy')
+                            elif (entity.health == 2):
+                                self._pavatar.playAnimation('damaged')
+                                self._healthBar.playAnimation('damaged')
+                            elif (entity.health == 1):
+                                self._pavatar.playAnimation('badlydamaged')
+                                self._healthBar.playAnimation('badlydamaged')
+                            elif (entity.health == 0):
+                                self._pavatar.playAnimation('badman')
+                                self._healthBar.playAnimation('badman')
+                            
                             if (entity.grabbedCup):
                                 self._loadScene(1)
                                 entity.grabbedCup = False
@@ -341,12 +375,17 @@ class Game:
             if (self._selectedSprite != None and self._editingLevelEnabled):
                 self._selectedSprite.draw(self._screen)
 
+            #draw UI
+            self._pavatar.draw(self._screen)
+            self._healthBar.draw(self._screen)
+
             self._screen.blit(self.uiCoin,self.uiCoinImage)
             text_render = self._font.render(f"{self._player_coins}", True, (0,0, 0))
             text_rect = text_render.get_rect()
             text_rect.x = self.screen_width - 75
             text_rect.y = 55
             self._screen.blit(text_render, text_rect)
+
 
 
             # draw logs
