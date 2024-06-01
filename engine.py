@@ -207,10 +207,8 @@ class Game:
                         self._controlHeld = True
                 # handle user input
                 elif event.type == pygame.KEYUP:
-                    print(self._editingLevelEnabled)
                     if (event.key == pygame.K_TAB): # change game mode (Game/Editor)
                         self._editingLevelEnabled = not self._editingLevelEnabled
-                        print(self._editingLevelEnabled)
                         if (self._editingLevelEnabled):
                             self._mainCamera.Follow(self._editorCam)
                         else:
