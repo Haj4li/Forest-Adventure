@@ -31,15 +31,16 @@ class Bat(sprites.Sprite):
             self._currentMoves =0
         
         predicted = False
-        if (self.maxleft != 0 and self.maxright != 0):
-            if (self._currentMoves >= self.maxright and self._movingDirection == 'right'):
-                self._movingDirection = 'left'
-                self._currentMoves =0
-                predicted = True
-            elif (self._currentMoves >= self.maxleft and self._movingDirection == 'left'):
+        if (self.maxleft != 0 and self._movingDirection == 'left'):
+            predicted = True
+            if (self._currentMoves >= self.maxleft ):
                 self._movingDirection = 'right'
                 self._currentMoves =0
-                predicted = True
+        elif (self.maxright != 0 and self._movingDirection == 'right'):
+            predicted = True
+            if (self._currentMoves >= self.maxright):
+                self._movingDirection = 'left'
+                self._currentMoves =0
 
         if (self._movingDirection == 'right'):
             velocity[0] += self.speed
@@ -49,20 +50,17 @@ class Bat(sprites.Sprite):
         if (not predicted):
             # check left and right
             breaked = False
-            prect = pygame.Rect((self.rect.x) + velocity[0],(self.rect.y) + velocity[1],self.rect.width,self.rect.height)
             for layer in entities.keys():
                 if (breaked):
                     break
                 for entity in entities[layer]:
-                    if entity.tag == "ground" and prect.colliderect(entity.rect):
+                    if entity.tag == "ground" and self.rect.colliderect(entity.rect):
                         if (pygame.Rect((self.rect.x) + velocity[0],(self.rect.y),self.rect.width,self.rect.height).colliderect(entity.rect)):
                             if (self._movingDirection == 'right'):
                                 self._movingDirection = 'left'
-                                self.maxright = self._currentMoves
                                 velocity[0] -= self.speed*2
                             else:
                                 self._movingDirection = 'right'
-                                self.maxleft = self._currentMoves
                                 velocity[0] += self.speed*2
                             self._currentMoves =0
                             breaked = False

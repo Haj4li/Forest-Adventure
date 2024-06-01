@@ -112,7 +112,7 @@ class Sprite():
                     if self.current_animation[3]:
                         self.current_frame_index = 0
                     else:
-                        self.current_frame_index = len(self.frames) - 1
+                        self.current_frame_index = self.current_animation[1] - 1
                         self.playing_animation = False
 
         frame = self.image.subsurface(pygame.Rect(self.current_frame_index*self.frame_width, self.current_row*self.frame_height, self.frame_width,self.frame_height)).convert_alpha()

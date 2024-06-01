@@ -119,6 +119,11 @@ class Game:
 
         # menu
         self._menubg = Sprite("assets/menu.png",0,0,'bg')
+        self._mPlayButton = Sprite("assets/play.png",400,250,'button')
+        self._mPlayButton.setupSpritesheet(2,1)
+        self._mPlayButton.addAnimation('normal',0,1,1,False)
+        self._mPlayButton.addAnimation('hover',1,1,1,False)
+
 
 
         self._editorModeEntities.append(Cloud("assets/cl.png",0,0))
@@ -344,6 +349,7 @@ class Game:
                 self._drawLog()
         else:
             self._menubg.draw(self._screen)
+            self._mPlayButton.draw(self._screen)
         # Update the display
         pygame.display.flip()
 
