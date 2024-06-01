@@ -42,21 +42,22 @@ class Player(sprites.Sprite):
         _isgrounded = False
         canJump = True
         breaked = False
-        prect = pygame.Rect((self.rect.x) + velocity[0],(self.rect.y) + velocity[1],self.rect.width,self.rect.height)
+        fixedRect = pygame.Rect((self.rect.x + 12),(self.rect.y),self.rect.width-24,self.rect.height)
+        prect = pygame.Rect(fixedRect.x + velocity[0],fixedRect.y + velocity[1],fixedRect.width,fixedRect.height)
         for layer in entities.keys():
             if (breaked):
                 break
             for entity in entities[layer]:
                 if entity.tag == "ground" and prect.colliderect(entity.rect):
                     # check down 
-                    if (not _isgrounded and pygame.Rect((self.rect.x),(self.rect.y)+ velocity[1],self.rect.width,self.rect.height).colliderect(entity.rect)):
+                    if (not _isgrounded and pygame.Rect(fixedRect.x,fixedRect.y+ velocity[1],fixedRect.width,fixedRect.height).colliderect(entity.rect)):
                         _isgrounded = True
                         self._doubleJumped = False
                     # check up (so player can jump if it's clear)
-                    if (canJump and pygame.Rect((self.rect.x),(self.rect.y) - self.gravityValue,self.rect.width,self.rect.height).colliderect(entity.rect)):
+                    if (canJump and pygame.Rect(fixedRect.x,fixedRect.y - self.gravityValue,fixedRect.width,fixedRect.height).colliderect(entity.rect)):
                         canJump = False
                     # check left and right
-                    if (canMove and pygame.Rect((self.rect.x) + velocity[0],(self.rect.y),self.rect.width,self.rect.height).colliderect(entity.rect)):
+                    if (canMove and pygame.Rect(fixedRect.x + velocity[0],fixedRect.y,fixedRect.width,fixedRect.height).colliderect(entity.rect)):
                         canMove = False
                     
                     if (not canMove and _isgrounded and not canJump ):
