@@ -18,6 +18,7 @@ class Game:
     _mousepos = pygame.Vector2(0,0)
     _font = None
     _removeFlag = False
+    _MouseClicked = False
     _mapSaved = False
     _editorCam = None
     _scenes = []
@@ -162,13 +163,17 @@ class Game:
     def _update(self):
         # handle events
         self._mousepos = pygame.Vector2(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1])
+        self._MouseClicked = False
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self._isRunning = False
+                return
+            elif event.type == pygame.MOUSEBUTTONUP:
+                if event.button == 1:
+                    self._MouseClicked = True
         if (self._isInMenu):
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self._isRunning = False
-                    return
+            pass
         else:
-
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self._isRunning = False
@@ -351,6 +356,10 @@ class Game:
             self._menubg.draw(self._screen)
             if (self._mPlayButton.rect.collidepoint(self._mousepos)):
                 self._mPlayButton.playAnimation('hover')
+                if (self._MouseClicked == True):
+                    self._isInMenu = False
+                    self._editingLevelEnabled = False
+                    self._loadScene(0)
             else:
                 self._mPlayButton.playAnimation('normal')
             self._mPlayButton.draw(self._screen)
