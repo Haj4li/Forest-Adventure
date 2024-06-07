@@ -5,11 +5,10 @@ import random
 class Cloud(sprites.Sprite):
     def __init__(self,image_path, start_pos,y,tag="cloud"):
         super().__init__(image_path,start_pos,y,tag)
-        self._startpos = start_pos
         
 
     def _reset(self):
-        self.rect.x = self._startpos + self.rect.width + 100
+        self.rect.x = 850 + random.randint(0,300)
         self.rect.y = random.randint(0,50)
 
     def update(self):

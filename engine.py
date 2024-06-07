@@ -1,5 +1,6 @@
 import pygame
 import os
+import sys
 
 from modules.bats import Bat
 from modules.sprites import *
@@ -24,6 +25,7 @@ class Game:
     _scenes = []
     _controlHeld = False
     _isInMenu = True
+    _gameOver = False
 
 
     _currentScene = 0
@@ -54,12 +56,17 @@ class Game:
         cloned = eval(evals[0])
         for e in evals[1:]:
             eval(e)
+        if (cloned.tag == 'Player'):
+            cloned.coins = self._player_coins
+            cloned.health = self._player_healths
+
         return cloned
     
     def _loadScene(self,scene_index):
 
         if (scene_index <= len(self._scenes)-1):
             self._currentScene = scene_index
+            self._gameOver = False
             # clear entities
             self._entities.clear()
             self._entities = {0:[],1:[],2:[],3:[],4:[],5:[],6:[],7:[]}
@@ -73,12 +80,14 @@ class Game:
                 for line in loadLevel:
                     self._entities[0].append(self._initSprite(line))
         else:
+            self._loadScene(scene_index-1)
             print(f"Error in loading scene {scene_index} .")
     
     def _start(self):
         # add game scenes
         self._scenes.append('level.lfa')
         self._scenes.append('level1.lfa')
+        self._scenes.append('level2.lfa')
 
         # add all entities to the editor entities if editing is enabled
         # self._editorModeEntities.append(Player("assets/fox.png",0,0))
@@ -97,12 +106,16 @@ class Game:
         self.uiCoinImage.x = self.screen_width - 50
         self.uiCoinImage.y = 50
 
-        self._player_coins = 0
-            
-        self._editorModeEntities.append(Sprite("assets/coin.png",0,0,"money"))
-        self._editorModeEntities.append(Sprite("assets/coin2.png",0,0,"money"))
+        self.uiGameover = pygame.image.load("assets/gameover.png")
+        self.uiGameoverImage = self.uiGameover.get_rect()
+        self.uiGameoverImage.x = 200
+        self.uiGameoverImage.y = 150
 
-        coinAnimated = Sprite("assets/coinAnim.png",0,0,"money")
+        self._player_coins = 0
+        self._player_healths = 0
+            
+        self._editorModeEntities.append(Sprite("assets/coin.png",0,0,"money5"))
+        coinAnimated = Sprite("assets/coinAnim.png",0,0,"money1")
         coinAnimated.setupSpritesheet(1,7)
         coinAnimated.addAnimation('idle',0,7,200,True)
         coinAnimated.playAnimation('idle')
@@ -120,11 +133,26 @@ class Game:
 
         # menu
         self._menubg = Sprite("assets/menu.png",0,0,'bg')
-        self._mPlayButton = Sprite("assets/play.png",350,150,'button')
+        self._creditsText = Sprite("assets/creditsText.png",490,100,'bg')
+
+        self._mPlayButton = Sprite("assets/play.png",300,200,'button')
         self._mPlayButton.setupSpritesheet(2,1)
         self._mPlayButton.addAnimation('normal',0,1,1,False)
         self._mPlayButton.addAnimation('hover',1,1,1,False)
         self._mPlayButton.playAnimation('normal')
+
+
+        self._mRestartButton = Sprite("assets/restartBtn.png",375,350,'button')
+        self._mRestartButton.setupSpritesheet(2,1)
+        self._mRestartButton.addAnimation('normal',0,1,1,False)
+        self._mRestartButton.addAnimation('hover',1,1,1,False)
+        self._mRestartButton.playAnimation('normal')
+
+        self._mExitButton = Sprite("assets/exitBtn.png",300,300,'button')
+        self._mExitButton.setupSpritesheet(2,1)
+        self._mExitButton.addAnimation('normal',0,1,1,False)
+        self._mExitButton.addAnimation('hover',1,1,1,False)
+        self._mExitButton.playAnimation('normal')
 
         self._pavatar = Sprite("assets/avatar.png",50,50,"ui")
         self._pavatar.setupSpritesheet(4,1)
@@ -158,6 +186,7 @@ class Game:
         character.addAnimation('run',1,12,25,True)
         character.addAnimation('fall',3,1,500,False)
         character.addAnimation('jump',4,1,500,False)
+        self._player_healths = character.health
 
         character.playAnimation('idle')
         
@@ -213,8 +242,6 @@ class Game:
                             self._mainCamera.Follow(self._editorCam)
                         else:
                             self._mainCamera.UnFollow()
-                    elif (event.key == pygame.K_r):
-                        self._loadScene(self._currentScene)
                     elif (event.key == pygame.K_LCTRL):
                         self._controlHeld = False
                     elif (self._editingLevelEnabled and event.key == pygame.K_e): # select next entity editor mode 
@@ -260,7 +287,9 @@ class Game:
                     elif (event.key == pygame.K_7):
                         self._currentLayer = 6
                     elif (event.key == pygame.K_0):
-                        self._loadScene(0)
+                        self._player_healths = 3
+                        self._player_coins = 0
+                        self._loadScene(self._currentScene)
                     elif (event.key == pygame.K_ESCAPE): # Escape the game
                         self._isRunning = False
                         return
@@ -276,7 +305,7 @@ class Game:
                         if (entity.tag == "Player"):
                             entity.update(self._entities) # update player
                             self._player_coins = entity.coins
-
+                            self._player_healths = entity.health
                             if (entity.health == 3):
                                 self._pavatar.playAnimation('healthy')
                                 self._healthBar.playAnimation('healthy')
@@ -290,8 +319,12 @@ class Game:
                                 self._pavatar.playAnimation('badman')
                                 self._healthBar.playAnimation('badman')
                             
+                            if (entity.isDead):
+                                self._gameOver = True
+                            
                             if (entity.grabbedCup):
-                                self._loadScene(1)
+                                self._currentScene+=1
+                                self._loadScene(self._currentScene)
                                 entity.grabbedCup = False
                                 return
                             if (not self._mainCamera.IsFollowing()): # update main camera if not following anything
@@ -378,28 +411,76 @@ class Game:
             self._healthBar.draw(self._screen)
 
             self._screen.blit(self.uiCoin,self.uiCoinImage)
+
+
             text_render = self._font.render(f"{self._player_coins}", True, (0,0, 0))
             text_rect = text_render.get_rect()
             text_rect.x = self.screen_width - 75
             text_rect.y = 55
             self._screen.blit(text_render, text_rect)
 
+            # draw Game over
+            if (self._gameOver):
+                self._screen.blit(self.uiGameover,self.uiGameoverImage)
+
+                if (self._player_coins >= 100):
+                    if (self._mRestartButton.rect.collidepoint(self._mousepos)):
+                        self._mRestartButton.playAnimation('hover')
+                        if (self._MouseClicked == True):
+                            self._player_coins -= 100
+                            self._player_healths += 1
+                            self._loadScene(self._currentScene)
+
+                    else:
+                        self._mRestartButton.playAnimation('normal')
+                    self._mRestartButton.draw(self._screen)
+                
+                else:
+                    self._mExitButton.rect.x = 375
+                    self._mExitButton.rect.y = 350
+
+                    if (self._mExitButton.rect.collidepoint(self._mousepos)):
+                        self._mExitButton.playAnimation('hover')
+                        if (self._MouseClicked == True):
+                            self._isInMenu = True
+                    else:
+                        self._mExitButton.playAnimation('normal')
+                    self._mExitButton.draw(self._screen)
+
 
 
             # draw logs
             if (self._loggingEnabled and self._editingLevelEnabled):
                 self._drawLog()
-        else:
+        else: # draw menu
             self._menubg.draw(self._screen)
+            self._creditsText.draw(self._screen)
+            self._mExitButton.rect.x = 300
+            self._mExitButton.rect.y = 300
+
+            # draw Buttons
             if (self._mPlayButton.rect.collidepoint(self._mousepos)):
                 self._mPlayButton.playAnimation('hover')
                 if (self._MouseClicked == True):
+                    self._player_coins = 0
+                    self._player_healths = 3
+                    self._currentScene = 0
                     self._isInMenu = False
                     self._editingLevelEnabled = False
                     self._loadScene(0)
             else:
                 self._mPlayButton.playAnimation('normal')
             self._mPlayButton.draw(self._screen)
+
+            if (self._mExitButton.rect.collidepoint(self._mousepos)):
+                self._mExitButton.playAnimation('hover')
+                if (self._MouseClicked == True):
+                    sys.exit()
+            else:
+                self._mExitButton.playAnimation('normal')
+            self._mExitButton.draw(self._screen)
+
+
         # Update the display
         pygame.display.flip()
 

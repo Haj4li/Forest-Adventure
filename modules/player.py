@@ -13,9 +13,18 @@ class Player(sprites.Sprite):
     coins = 0
     health = 3
     isDead = False
+    _invinsible = 0
 
     def __init__(self, image_path,x,y,tag="Player"):
         super().__init__(image_path,x,y,tag)
+    def draw(self,screen,position = None):
+        if (self._invinsible <= 0):
+            super().draw(screen,position)
+        else:
+            self._invinsible -= 1
+            if (self._invinsible % 10 == 0):
+                super().draw(screen,position)
+
     
     def update(self, entities):
         if (self.isDead):
@@ -26,11 +35,11 @@ class Player(sprites.Sprite):
         
        
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_a]:
+        if keys[pygame.K_a] or keys[pygame.K_LEFT]:
             velocity[0] -= self.speed
             super().playAnimation('run')
             super().flip(True,False)
-        if keys[pygame.K_d]:
+        if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
             velocity[0] += self.speed
             super().playAnimation('run')
             super().flip(False,False)
@@ -67,11 +76,12 @@ class Player(sprites.Sprite):
                     if (not canMove and _isgrounded and not canJump ):
                         breaked = True
                         break
-                elif entity.tag == "money" and prect.colliderect(entity.rect):
-                    self.coins += 1
+                elif entity.tag[:5] == "money" and prect.colliderect(entity.rect):
+                    self.coins += int(entity.tag[5:])
                     pygame.mixer.Sound('assets/Music/pickupCoin.wav').play()
                     entities[layer].remove(entity)
-                elif entity.tag == "Bat" and prect.colliderect(entity.rect):
+                elif entity.tag == "Bat" and prect.colliderect(entity.rect) and self._invinsible <= 0:
+                    self._invinsible = 200
                     self.health -= 1
                     if (self.health <= 0):
                         print("Is dead")
@@ -82,7 +92,7 @@ class Player(sprites.Sprite):
                     self.grabbedCup = True
 
         # jump
-        if keys[pygame.K_w] and (_isgrounded and canJump):
+        if (keys[pygame.K_w] or keys[pygame.K_UP]) and (_isgrounded and canJump):
             self._jumpingTo = self.jumpForce
 
         
@@ -104,6 +114,9 @@ class Player(sprites.Sprite):
         # move player
         if (canMove):
             self.move(velocity[0],0)
+
+        if (self.rect.y >= 650):
+            self.isDead = True
         
         pass
 
