@@ -26,6 +26,7 @@ class Game:
     _controlHeld = False
     _isInMenu = True
     _gameOver = False
+    _wonGame = False
 
 
     _currentScene = 0
@@ -67,6 +68,7 @@ class Game:
         if (scene_index <= len(self._scenes)-1):
             self._currentScene = scene_index
             self._gameOver = False
+            self._wonGame = False
             # clear entities
             self._entities.clear()
             self._entities = {0:[],1:[],2:[],3:[],4:[],5:[],6:[],7:[]}
@@ -110,6 +112,11 @@ class Game:
         self.uiGameoverImage = self.uiGameover.get_rect()
         self.uiGameoverImage.x = 200
         self.uiGameoverImage.y = 150
+
+        self.uiWinGame = pygame.image.load("assets/wingame.png")
+        self.uiWinGameImage = self.uiWinGame.get_rect()
+        self.uiWinGameImage.x = 200
+        self.uiWinGameImage.y = 150
 
         self._player_coins = 0
         self._player_healths = 0
@@ -303,6 +310,8 @@ class Game:
                 for layer in self._entities.keys():
                     for entity in self._entities[layer]:
                         if (entity.tag == "Player"):
+                            if (self._wonGame):
+                                continue
                             entity.update(self._entities) # update player
                             self._player_coins = entity.coins
                             self._player_healths = entity.health
@@ -324,8 +333,11 @@ class Game:
                             
                             if (entity.grabbedCup):
                                 self._currentScene+=1
-                                self._loadScene(self._currentScene)
-                                entity.grabbedCup = False
+                                if (self._currentScene >= len(self._scenes)):
+                                    self._wonGame = True
+                                else:
+                                    self._loadScene(self._currentScene)
+                                    entity.grabbedCup = False
                                 return
                             if (not self._mainCamera.IsFollowing()): # update main camera if not following anything
                                 self._mainCamera.Follow(entity.rect)
@@ -446,7 +458,19 @@ class Game:
                     else:
                         self._mExitButton.playAnimation('normal')
                     self._mExitButton.draw(self._screen)
+            elif (self._wonGame):
+                self._screen.blit(self.uiWinGame,self.uiWinGameImage)
 
+                self._mExitButton.rect.x = 375
+                self._mExitButton.rect.y = 350
+
+                if (self._mExitButton.rect.collidepoint(self._mousepos)):
+                    self._mExitButton.playAnimation('hover')
+                    if (self._MouseClicked == True):
+                        self._isInMenu = True
+                else:
+                    self._mExitButton.playAnimation('normal')
+                self._mExitButton.draw(self._screen)
 
 
             # draw logs
